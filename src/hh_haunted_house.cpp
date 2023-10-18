@@ -1,4 +1,4 @@
-#include "tmg_test_game.h"
+#include "hh_haunted_house.h"
 
 #include "bn_keypad.h"
 
@@ -10,30 +10,30 @@
 
 namespace
 {
-    constexpr bn::string_view code_credits[] = { "GValiente" };
-    constexpr bn::string_view graphics_credits[] = { "GValiente" };
+    constexpr bn::string_view code_credits[] = { "Jeremy Elkayam, Michael Elkayam" };
+    constexpr bn::string_view graphics_credits[] = { "Jeremy Elkayam, Michael Elkayam" };
 }
 
-MJ_GAME_LIST_ADD(tmg::test_game)
+MJ_GAME_LIST_ADD(hh::haunted_house)
 MJ_GAME_LIST_ADD_CODE_CREDITS(code_credits)
 MJ_GAME_LIST_ADD_GRAPHICS_CREDITS(graphics_credits)
 // MJ_GAME_LIST_ADD_MUSIC_CREDITS(music_credits)
 // MJ_GAME_LIST_ADD_SFX_CREDITS(sfx_credits)
 
-namespace tmg
+namespace hh
 {
 
-test_game::test_game(int completed_games, const mj::game_data& data) :
+haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _bg(bn::regular_bg_items::tmg_press_a.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data))
 {
 }
 
-void test_game::fade_in([[maybe_unused]] const mj::game_data& data)
+void haunted_house::fade_in([[maybe_unused]] const mj::game_data& data)
 {
 }
 
-mj::game_result test_game::play(const mj::game_data& data)
+mj::game_result haunted_house::play(const mj::game_data& data)
 {
     mj::game_result result;
     result.exit = data.pending_frames == 0;
@@ -68,7 +68,7 @@ mj::game_result test_game::play(const mj::game_data& data)
     return result;
 }
 
-void test_game::fade_out([[maybe_unused]] const mj::game_data& data)
+void haunted_house::fade_out([[maybe_unused]] const mj::game_data& data)
 {
 }
 

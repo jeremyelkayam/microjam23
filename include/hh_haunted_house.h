@@ -1,22 +1,22 @@
-#ifndef TMG_TEST_GAME_H
-#define TMG_TEST_GAME_H
+#ifndef HH_HAUNTED_HOUSE_H
+#define HH_HAUNTED_HOUSE_H
 
 #include "bn_regular_bg_ptr.h"
 
 #include "mj/mj_game.h"
 
-namespace tmg
+namespace hh
 {
 
-class test_game : public mj::game
+class haunted_house : public mj::game
 {
 
 public:
-    test_game(int completed_games, const mj::game_data& data);
+    haunted_house(int completed_games, const mj::game_data& data);
 
     [[nodiscard]] bn::string<16> title() const final
     {
-        return "Button!";
+        return "$1,000,000!";
     }
 
     [[nodiscard]] int total_frames() const final
@@ -42,6 +42,16 @@ private:
     bool _victory = false;
     bool _defeat = false;
 };
+
+class player {
+public: 
+    player(bn::fixed x, bn::fixed y);
+    void update();
+
+private:
+    bn::fixed_point _pos;
+    bn::sprite_ptr _sprite;
+}
 
 }
 
