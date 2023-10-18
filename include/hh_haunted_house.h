@@ -2,11 +2,35 @@
 #define HH_HAUNTED_HOUSE_H
 
 #include "bn_regular_bg_ptr.h"
+#include "bn_sprite_ptr.h"
+#include "bn_fixed_point.h"
+#include "bn_sprite_animate_actions.h"
 
 #include "mj/mj_game.h"
 
+
 namespace hh
 {
+class player {
+public: 
+    player(bn::fixed x, bn::fixed y);
+    void update();
+
+private:
+    bn::fixed_point _pos;
+    bn::sprite_ptr _sprite;
+};
+
+class monster {
+public: 
+    monster(bn::fixed x, bn::fixed y);
+    void update();
+
+private:
+    bn::fixed_point _pos;
+    bn::sprite_ptr _sprite;
+    bn::sprite_animate_action<2> _anim;
+};
 
 class haunted_house : public mj::game
 {
@@ -16,7 +40,7 @@ public:
 
     [[nodiscard]] bn::string<16> title() const final
     {
-        return "$1,000,000!";
+        return "Survive!";
     }
 
     [[nodiscard]] int total_frames() const final
@@ -41,17 +65,9 @@ private:
     int _show_result_frames = 60;
     bool _victory = false;
     bool _defeat = false;
+    player _player;
+    monster _monster;
 };
-
-class player {
-public: 
-    player(bn::fixed x, bn::fixed y);
-    void update();
-
-private:
-    bn::fixed_point _pos;
-    bn::sprite_ptr _sprite;
-}
 
 }
 
