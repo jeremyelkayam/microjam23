@@ -4,9 +4,7 @@
 
 #include "mj/mj_game_list.h"
 
-#include "bn_regular_bg_items_tmg_press_a.h"
-#include "bn_regular_bg_items_tmg_you_lose.h"
-#include "bn_regular_bg_items_tmg_you_win.h"
+#include "bn_regular_bg_items_hh_black_bg.h"
 #include "bn_sprite_items_hh_eyes.h"
 #include "bn_sprite_items_hh_monster.h"
 
@@ -26,7 +24,7 @@ namespace hh
 {
 
 haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
-    _bg(bn::regular_bg_items::tmg_press_a.create_bg((256 - 240) / 2, (256 - 160) / 2)),
+    _bg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data)),
     _player(0,0),
     _monster(40, 40)
@@ -83,23 +81,58 @@ void haunted_house::fade_out([[maybe_unused]] const mj::game_data& data)
 
 player::player(bn::fixed x, bn::fixed y) : 
     _pos(x, y), 
-    _sprite(bn::sprite_items::hh_eyes.create_sprite(x,y)) {
+    _sprite(bn::sprite_items::hh_eyes.create_sprite(x,y)),
+    _direction(8) {
     
     _sprite.set_scale(2);
 }
 
 void player::update(){
-    if(bn::keypad::up_held()){
-        _pos.set_y(_pos.y() - 1);
-    }
-    if(bn::keypad::down_held()){
-        _pos.set_y(_pos.y() + 1);
-    }
-    if(bn::keypad::left_held()){
-        _pos.set_x(_pos.x() - 1);
+    // if(bn::keypad::up_held()){
+    //     _pos.set_y(_pos.y() - 1);
+    // }
+    // if(bn::keypad::down_held()){
+    //     _pos.set_y(_pos.y() + 1);
+    // }
+    // if(bn::keypad::left_held()){
+    //     _pos.set_x(_pos.x() - 1);
+    // }
+    // if(bn::keypad::right_held()){
+    //     _pos.set_x(_pos.x() + 1);
+    // }
+    if(!bn::keypad::up_held() && !bn::keypad::down_held() && !bn::keypad::left_held() && !bn::keypad::right_held()){
+        _direction = 8;
     }
     if(bn::keypad::right_held()){
-        _pos.set_x(_pos.x() + 1);
+        _direction = 0;
+    }
+    if(bn::keypad::right_held() && bn::keypad::down_held()){
+        _direction = 1;
+    }
+    if(bn::keypad::down_held()){
+        _direction = 2;
+    }
+    if(bn::keypad::down_held() && bn::keypad::left_held()){
+        _direction = 3;
+    }
+    if(bn::keypad::left_held()){
+        _direction = 4;
+    }
+    if(bn::keypad::left_held() && bn::keypad::up_held()){
+        _direction = 5;
+    }
+    if(bn::keypad::up_held()){
+        _direction = 6;
+    }
+    if(bn::keypad::up_held() && bn::keypad::right_held()){
+        _direction = 7;
+    }
+
+    switch(_direction){
+        case 0:
+            
+        default:
+            BN_ERROR("invalid direction found for player (must be between 0 and 8): ", _direction);
     }
 
     _sprite.set_position(_pos);

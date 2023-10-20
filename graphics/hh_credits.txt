@@ -1,4 +1,6 @@
-
+hh_eyes.bmp
+hh_black_bg.bmp
+hh_monster.bmp
 	Jeremy Elkayam
 	CC0 1.0 Universal (CC0 1.0)
 	jne@jeremyelkayam.com

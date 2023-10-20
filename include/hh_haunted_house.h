@@ -19,6 +19,7 @@ public:
 private:
     bn::fixed_point _pos;
     bn::sprite_ptr _sprite;
+    uint8_t _direction;
 };
 
 class monster {
