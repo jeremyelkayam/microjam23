@@ -39,8 +39,16 @@ void entity::update(){
             dy *= -1;
         }
 
+        if(_pos.x() + dx > 110 || _pos.x() + dx < -110){
+            dx = 0;
+        } 
+        if(_pos.y() + dy > 60 || _pos.y() + dy < -75){
+            dy = 0;
+        } 
+
         _pos.set_x(_pos.x() + dx);
         _pos.set_y(_pos.y() + dy);
+        _hitbox.set_position(_pos);
     }
 
 }

@@ -1,6 +1,5 @@
 #include "hh_player.h"
 #include "bn_keypad.h"
-#include "bn_log.h"
 #include "bn_sprite_items_hh_eyes.h"
 #include "bn_sprite_items_hh_person_32.h"
 

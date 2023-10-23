@@ -10,6 +10,7 @@
 #include "bn_sprite_items_hh_monster.h"
 #include "bn_bg_palettes.h"
 #include "bn_sprite_palettes.h"
+#include "bn_sound_items.h"
 
 namespace
 {
@@ -43,8 +44,6 @@ mj::game_result haunted_house::play(const mj::game_data& data)
     mj::game_result result;
 
     // if(data.pending_frames == 180) {
-        // _defeat = true;
-        //     result.remove_title = true;
 
     // }
 
@@ -52,6 +51,8 @@ mj::game_result haunted_house::play(const mj::game_data& data)
         //you won
         _victory = true;
         _player.show_body();
+        _player.disable_movement();
+        _monster.disable_movement();
         bn::bg_palettes::set_brightness(1);
         bn::sprite_palettes::set_brightness(1);
     }
@@ -70,6 +71,14 @@ mj::game_result haunted_house::play(const mj::game_data& data)
         //     _defeat = true;
         _player.take_button_input();
         _monster.update();
+        _monster.point_at(_player.pos());
+
+        if(_player.hitbox().intersects(_monster.hitbox())){
+            _defeat = true;
+            result.remove_title = true;
+            _player.disable_movement();
+            bn::sound_items::hh_waves.play(1);
+        }
     }
     else
     {

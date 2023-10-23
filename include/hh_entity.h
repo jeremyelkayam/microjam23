@@ -2,6 +2,7 @@
 #define HH_ENTITY_H
 
 #include "bn_fixed_rect.h"
+#include "bn_log.h"
 
 
 namespace hh {
@@ -10,6 +11,7 @@ public:
     entity(bn::fixed x, bn::fixed y, bn::fixed width, bn::fixed height, bn::fixed speed);
     void update();
     const bn::fixed_rect &hitbox() {return _hitbox;}
+    const bn::fixed_point &pos() {return _pos;}
     void disable_movement() { _can_move = false;}
 
 protected:
@@ -21,7 +23,7 @@ protected:
     /// @brief Represents directions in the increment of 45 degrees.
     // 0 is center right, and the . 
     // 8 is a special value indicating center.
-    const uint8_t _center = 8, _right = 0, _down_right = 1, 
+    const int8_t _center = 8, _right = 0, _down_right = 1, 
         _down = 2, _down_left = 3, _left = 4, _up_left = 5,
         _up = 6, _up_right = 7;
 
