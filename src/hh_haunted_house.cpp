@@ -31,8 +31,8 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _bg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data)),
     _player(0,0),
-    _monster(40, 40),
-    _bat(40,-40)
+    _spider(40, 40),
+    _bat(40,-40, 2)
 {
 }
 
@@ -44,21 +44,18 @@ mj::game_result haunted_house::play(const mj::game_data& data)
 {
     mj::game_result result;
 
-    // if(data.pending_frames == 180) {
-
-    // }
     if(! _defeat)
     {
 
-        // if collision with monster
+        // if collision with spider
         //     result.remove_title = true;
         //     _defeat = true;
         _player.take_button_input();
-        _monster.update();
-        _monster.point_at(_player.pos());
+        _spider.update();
+        _spider.point_at(_player.pos());
         _bat.update();
 
-        if(_player.hitbox().intersects(_monster.hitbox()) || 
+        if(_player.hitbox().intersects(_spider.hitbox()) || 
             _player.hitbox().intersects(_bat.hitbox())){
             _defeat = true;
             result.remove_title = true;
@@ -71,7 +68,7 @@ mj::game_result haunted_house::play(const mj::game_data& data)
             _victory = true;
             _player.show_body(data.random.get_int(2));
             _player.disable_movement();
-            _monster.disable_movement();
+            _spider.disable_movement();
             _bat.disable_movement();
             bn::bg_palettes::set_brightness(1);
             bn::sprite_palettes::set_brightness(1);

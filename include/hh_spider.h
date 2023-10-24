@@ -7,9 +7,9 @@
 
 
 namespace hh {
-class monster : public entity {
+class spider : public entity {
 public: 
-    monster(bn::fixed x, bn::fixed y);
+    spider(bn::fixed x, bn::fixed y);
     void update();
     void point_at(bn::fixed_point pos);
 

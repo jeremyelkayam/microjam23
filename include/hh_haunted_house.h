@@ -6,7 +6,7 @@
 
 #include "hh_player.h"
 #include "hh_bat.h"
-#include "hh_monster.h"
+#include "hh_spider.h"
 
 #include "mj/mj_game.h"
 
@@ -48,7 +48,7 @@ private:
     bool _victory = false;
     bool _defeat = false;
     player _player;
-    monster _monster;
+    spider _spider;
     bat _bat;
 };
 

@@ -5,8 +5,8 @@
 
 namespace hh{
 
-bat::bat(bn::fixed x, bn::fixed y) : 
-    entity(x, y, 16, 16, 2, _left),
+bat::bat(bn::fixed x, bn::fixed y, uint8_t initial_direction) : 
+    entity(x, y, 16, 16, 2, initial_direction),
     _sprite(bn::sprite_items::hh_monster.create_sprite(x,y, 4)),
     _anim(bn::sprite_vertical_flip_toggle_action(_sprite, 5)),
     _turn_time(20),

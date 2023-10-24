@@ -1,12 +1,12 @@
 
-#include "hh_monster.h"
+#include "hh_spider.h"
 
 #include "bn_sprite_items_hh_monster.h"
 #include "bn_math.h"
 
 namespace hh{
 
-monster::monster(bn::fixed x, bn::fixed y) : 
+spider::spider(bn::fixed x, bn::fixed y) : 
     entity(x, y, 16, 16, 0.5, 0),
     _sprite(bn::sprite_items::hh_monster.create_sprite(x,y)),
     _anim(bn::create_sprite_animate_action_forever(_sprite, 5, 
@@ -15,13 +15,13 @@ monster::monster(bn::fixed x, bn::fixed y) :
     _sprite.set_scale(2);
 }
 
-void monster::update(){
+void spider::update(){
     entity::update();
     _sprite.set_position(_pos);
     _anim.update();
 }
 
-void monster::point_at(bn::fixed_point pos){
+void spider::point_at(bn::fixed_point pos){
     //this gives us the angle as a value between -0.5 and 0.5
     bn::fixed angle = bn::diamond_angle((pos.y() - _pos.y()).floor_integer(),
                                         (pos.x() - _pos.x()).floor_integer());
