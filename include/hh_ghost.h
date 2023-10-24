@@ -1,5 +1,5 @@
-#ifndef HH_SPIDER_H
-#define HH_SPIDER_H
+#ifndef HH_GHOST_H
+#define HH_GHOST_H
 
 #include "hh_entity.h"
 #include "bn_sprite_ptr.h"
@@ -7,11 +7,10 @@
 
 
 namespace hh {
-class spider : public entity {
+class ghost : public entity {
 public: 
-    spider(bn::fixed x, bn::fixed y);
+    ghost(bn::fixed x, bn::fixed y, uint8_t initial_direction);
     void update();
-    void point_at(bn::fixed_point pos);
 
 private:
     bn::sprite_ptr _sprite;

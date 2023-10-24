@@ -32,8 +32,11 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data)),
     _player(0,0),
     _spider(40, 40),
-    _bat(40,-40, 2)
+    _bat(40,-40, 2),
+    _ghost(-40,-40,5)
 {
+    BN_LOG("total frames: ", _total_frames);
+    BN_LOG("games done: ", completed_games);
 }
 
 void haunted_house::fade_in([[maybe_unused]] const mj::game_data& data)
@@ -54,9 +57,11 @@ mj::game_result haunted_house::play(const mj::game_data& data)
         _spider.update();
         _spider.point_at(_player.pos());
         _bat.update();
+        _ghost.update();
 
         if(_player.hitbox().intersects(_spider.hitbox()) || 
-            _player.hitbox().intersects(_bat.hitbox())){
+            _player.hitbox().intersects(_bat.hitbox()) || 
+            _player.hitbox().intersects(_ghost.hitbox())){
             _defeat = true;
             result.remove_title = true;
             _player.disable_movement();
@@ -70,6 +75,7 @@ mj::game_result haunted_house::play(const mj::game_data& data)
             _player.disable_movement();
             _spider.disable_movement();
             _bat.disable_movement();
+            _ghost.disable_movement();
             bn::bg_palettes::set_brightness(1);
             bn::sprite_palettes::set_brightness(1);
         }

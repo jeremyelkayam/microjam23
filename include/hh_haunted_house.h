@@ -7,6 +7,7 @@
 #include "hh_player.h"
 #include "hh_bat.h"
 #include "hh_spider.h"
+#include "hh_ghost.h"
 
 #include "mj/mj_game.h"
 
@@ -50,6 +51,7 @@ private:
     player _player;
     spider _spider;
     bat _bat;
+    ghost _ghost;
 };
 
 }

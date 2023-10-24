@@ -31,6 +31,9 @@ protected:
     bn::fixed_rect _hitbox;
     bn::fixed _speed;
 
+    //map boundaries
+    const bn::fixed _lbound = -110, _rbound = 110, _tbound = -75, _bbound = 60;
+
     uint8_t _direction;
     bool _can_move;
 };
