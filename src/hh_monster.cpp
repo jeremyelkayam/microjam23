@@ -7,7 +7,7 @@
 namespace hh{
 
 monster::monster(bn::fixed x, bn::fixed y) : 
-    entity(x, y, 16, 16, 0.5),
+    entity(x, y, 16, 16, 0.5, 0),
     _sprite(bn::sprite_items::hh_monster.create_sprite(x,y)),
     _anim(bn::create_sprite_animate_action_forever(_sprite, 5, 
             bn::sprite_items::hh_monster.tiles_item(), 0, 1)) {

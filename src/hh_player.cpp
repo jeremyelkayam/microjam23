@@ -2,12 +2,13 @@
 #include "bn_keypad.h"
 #include "bn_sprite_items_hh_eyes.h"
 #include "bn_sprite_items_hh_person_32.h"
+#include "bn_sprite_items_hh_ken.h"
 
 namespace hh 
 {
 
 player::player(bn::fixed x, bn::fixed y) : 
-    entity(x, y, 18, 4, 1),
+    entity(x, y, 18, 4, 1, 0),
     _eyes(bn::sprite_items::hh_eyes.create_sprite(x,y)),
     _body(bn::sprite_items::hh_person_32.create_sprite(x,y)) {
     
@@ -81,11 +82,13 @@ void player::update(){
     }
 }
 
-void player::show_body(){
+void player::show_body(const uint8_t &rand){
     _body.set_x(_pos.x());
     _body.set_y(_pos.y() + 6);
     _body.set_visible(true);
-    _can_move = false;
+    if(rand == 1){
+        _body.set_item(bn::sprite_items::hh_ken);
+    }
 }
 
 void player::take_button_input(){

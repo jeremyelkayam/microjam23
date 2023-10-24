@@ -8,7 +8,7 @@
 namespace hh {
 class entity {
 public: 
-    entity(bn::fixed x, bn::fixed y, bn::fixed width, bn::fixed height, bn::fixed speed);
+    entity(bn::fixed x, bn::fixed y, bn::fixed width, bn::fixed height, bn::fixed speed, uint8_t direction);
     void update();
     const bn::fixed_rect &hitbox() {return _hitbox;}
     const bn::fixed_point &pos() {return _pos;}

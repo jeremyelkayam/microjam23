@@ -31,7 +31,8 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _bg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data)),
     _player(0,0),
-    _monster(40, 40)
+    _monster(40, 40),
+    _bat(40,-40)
 {
 }
 
@@ -46,23 +47,6 @@ mj::game_result haunted_house::play(const mj::game_data& data)
     // if(data.pending_frames == 180) {
 
     // }
-
-    if(data.pending_frames == 90){
-        //you won
-        _victory = true;
-        _player.show_body();
-        _player.disable_movement();
-        _monster.disable_movement();
-        bn::bg_palettes::set_brightness(1);
-        bn::sprite_palettes::set_brightness(1);
-    }
-    if(data.pending_frames < 90 && data.pending_frames >= 60){
-        bn::fixed brightness = bn::fixed(data.pending_frames - 60) * bn::fixed(0.033333);
-        bn::bg_palettes::set_brightness(brightness);
-        bn::sprite_palettes::set_brightness(brightness);
-        _bg.set_item(bn::regular_bg_items::hh_gymnasium);
-    }
-// ! _victory && 
     if(! _defeat)
     {
 
@@ -72,12 +56,31 @@ mj::game_result haunted_house::play(const mj::game_data& data)
         _player.take_button_input();
         _monster.update();
         _monster.point_at(_player.pos());
+        _bat.update();
 
-        if(_player.hitbox().intersects(_monster.hitbox())){
+        if(_player.hitbox().intersects(_monster.hitbox()) || 
+            _player.hitbox().intersects(_bat.hitbox())){
             _defeat = true;
             result.remove_title = true;
             _player.disable_movement();
             bn::sound_items::hh_waves.play(1);
+        }
+
+        if(data.pending_frames == 90){
+            //you won
+            _victory = true;
+            _player.show_body(data.random.get_int(2));
+            _player.disable_movement();
+            _monster.disable_movement();
+            _bat.disable_movement();
+            bn::bg_palettes::set_brightness(1);
+            bn::sprite_palettes::set_brightness(1);
+        }
+        if(data.pending_frames < 90 && data.pending_frames >= 60){
+            bn::fixed brightness = bn::fixed(data.pending_frames - 60) * bn::fixed(0.033333);
+            bn::bg_palettes::set_brightness(brightness);
+            bn::sprite_palettes::set_brightness(brightness);
+            _bg.set_item(bn::regular_bg_items::hh_gymnasium);
         }
     }
     else

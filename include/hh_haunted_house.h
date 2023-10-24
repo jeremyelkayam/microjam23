@@ -5,6 +5,7 @@
 
 
 #include "hh_player.h"
+#include "hh_bat.h"
 #include "hh_monster.h"
 
 #include "mj/mj_game.h"
@@ -48,6 +49,7 @@ private:
     bool _defeat = false;
     player _player;
     monster _monster;
+    bat _bat;
 };
 
 }

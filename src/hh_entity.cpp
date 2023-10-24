@@ -2,11 +2,11 @@
 
 namespace hh {
 
-entity::entity(bn::fixed x, bn::fixed y, bn::fixed width, bn::fixed height, bn::fixed speed) : 
+entity::entity(bn::fixed x, bn::fixed y, bn::fixed width, bn::fixed height, bn::fixed speed, uint8_t direction) : 
     _pos(x, y), 
     _hitbox(x, y, width, height),
     _speed(speed),
-    _direction(_center),
+    _direction(direction),
     _can_move(true) {
 }
 

@@ -11,7 +11,7 @@ class player : public entity {
 public: 
     player(bn::fixed x, bn::fixed y);
     void update();
-    void show_body();
+    void show_body(const uint8_t &rand);
     void take_button_input();
     void rotate_eyes();
 
