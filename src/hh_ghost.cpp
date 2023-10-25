@@ -21,7 +21,6 @@ void ghost::update(){
        _pos.x() >= _rbound - 5 || _pos.x() <= _lbound + 5){
         //mirror the direction so it bounces off the walls
         _direction = (_direction + 4) % 8;
-        BN_LOG("direction:", _direction);
     }
 
     entity::update();

@@ -125,7 +125,6 @@ void player::take_button_input(){
 
 void player::rotate_eyes(){
     _direction = (_direction + 1) % 8;
-    BN_LOG("direction: ", _direction);
 }
 
 }

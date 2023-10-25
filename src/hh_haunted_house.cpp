@@ -30,13 +30,31 @@ namespace hh
 haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _bg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data)),
-    _player(0,0),
-    _spider(40, 40),
-    _bat(40,-40, 2),
-    _ghost(-40,-40,5)
+    _player(0,0)
+    // _spider(40, 40),
+    // _bat(40,-40, 2),
+    // _ghost(-40,-40,5)
 {
     BN_LOG("total frames: ", _total_frames);
     BN_LOG("games done: ", completed_games);
+
+    uint8_t first_baddie = data.random.get_int(3);
+    uint8_t xquad = data.random.get_int(2) == 1 ? 1 : -1;
+    uint8_t yquad = data.random.get_int(2) == 1 ? 1 : -1;
+    bn::fixed xcor = data.random.get_fixed(20, 110) * xquad;
+    bn::fixed ycor = yquad == 1 ? data.random.get_fixed(20, 75) : 
+                                  data.random.get_fixed(-60, -20);
+    uint8_t direction = data.random.get_int(8);
+    if(first_baddie == 0){
+        _spider.emplace(xcor, ycor);
+    }else if(first_baddie == 1){
+        _bat.emplace(xcor, ycor,direction);
+    }else if(first_baddie == 2){
+        _ghost.emplace(xcor, ycor,direction);
+    }else{
+        BN_ERROR("buddy you fucked up");
+    }
+
 }
 
 void haunted_house::fade_in([[maybe_unused]] const mj::game_data& data)
@@ -50,18 +68,18 @@ mj::game_result haunted_house::play(const mj::game_data& data)
     if(! _defeat)
     {
 
-        // if collision with spider
-        //     result.remove_title = true;
-        //     _defeat = true;
         _player.take_button_input();
-        _spider.update();
-        _spider.point_at(_player.pos());
-        _bat.update();
-        _ghost.update();
+        if(_spider){
+            _spider->update();
+            _spider->point_at(_player.pos());
 
-        if(_player.hitbox().intersects(_spider.hitbox()) || 
-            _player.hitbox().intersects(_bat.hitbox()) || 
-            _player.hitbox().intersects(_ghost.hitbox())){
+        }
+        if(_bat) _bat->update();
+        if(_ghost) _ghost->update();
+
+        if((_spider && _player.hitbox().intersects(_spider->hitbox())) || 
+            (_bat && _player.hitbox().intersects(_bat->hitbox())) || 
+            (_ghost && _player.hitbox().intersects(_ghost->hitbox()))){
             _defeat = true;
             result.remove_title = true;
             _player.disable_movement();
@@ -73,9 +91,13 @@ mj::game_result haunted_house::play(const mj::game_data& data)
             _victory = true;
             _player.show_body(data.random.get_int(2));
             _player.disable_movement();
-            _spider.disable_movement();
-            _bat.disable_movement();
-            _ghost.disable_movement();
+
+            //todo: show guys holding up the baddies 
+            if(_spider) _spider->disable_movement();
+            if(_bat) _bat->disable_movement();
+            if(_ghost) _ghost->disable_movement();
+
+
             bn::bg_palettes::set_brightness(1);
             bn::sprite_palettes::set_brightness(1);
         }
@@ -91,6 +113,7 @@ mj::game_result haunted_house::play(const mj::game_data& data)
         //only happens if you lose
         if(_show_result_frames)
         {
+            //todo: add pee-pants-ometer
             --_show_result_frames;
             if(_show_result_frames % 2 == 0){
                 //rotate eyeballs every other frame

@@ -2,7 +2,7 @@
 #define HH_HAUNTED_HOUSE_H
 
 #include "bn_regular_bg_ptr.h"
-
+#include "bn_optional.h"
 
 #include "hh_player.h"
 #include "hh_bat.h"
@@ -49,9 +49,11 @@ private:
     bool _victory = false;
     bool _defeat = false;
     player _player;
-    spider _spider;
-    bat _bat;
-    ghost _ghost;
+    bn::optional<spider> _spider;
+    bn::optional<bat> _bat;
+    bn::optional<ghost> _ghost;
+
+    const uint8_t _normal = 4, _hard = 8; 
 };
 
 }
