@@ -1,14 +1,16 @@
 #include "hh_haunted_house.h"
 
 #include "bn_keypad.h"
+#include "bn_log.h"
 
 #include "mj/mj_game_list.h"
 
-#include "bn_regular_bg_items_tmg_press_a.h"
-#include "bn_regular_bg_items_tmg_you_lose.h"
-#include "bn_regular_bg_items_tmg_you_win.h"
-#include "bn_sprite_items_hh_eyes.h"
+#include "bn_regular_bg_items_hh_black_bg.h"
+#include "bn_regular_bg_items_hh_gymnasium.h"
 #include "bn_sprite_items_hh_monster.h"
+#include "bn_bg_palettes.h"
+#include "bn_sprite_palettes.h"
+#include "bn_sound_items.h"
 
 namespace
 {
@@ -26,10 +28,11 @@ namespace hh
 {
 
 haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
-    _bg(bn::regular_bg_items::tmg_press_a.create_bg((256 - 240) / 2, (256 - 160) / 2)),
+    _bg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data)),
     _player(0,0),
-    _monster(40, 40)
+    _monster(40, 40),
+    _bat(40,-40)
 {
 }
 
@@ -40,33 +43,56 @@ void haunted_house::fade_in([[maybe_unused]] const mj::game_data& data)
 mj::game_result haunted_house::play(const mj::game_data& data)
 {
     mj::game_result result;
-    result.exit = data.pending_frames == 0;
 
-    if(! _victory && ! _defeat)
+    // if(data.pending_frames == 180) {
+
+    // }
+    if(! _defeat)
     {
-        // if(bn::keypad::a_pressed())
-        // {
-        //     _bg.set_item(bn::regular_bg_items::tmg_you_win);
-        //     result.remove_title = true;
-        //     _victory = true;
-        // }
-        // else if(! bn::keypad::start_pressed() && bn::keypad::any_pressed())
-        // {
-        //     _bg.set_item(bn::regular_bg_items::tmg_you_lose);
+
+        // if collision with monster
         //     result.remove_title = true;
         //     _defeat = true;
-        // }
-        _player.update();
+        _player.take_button_input();
         _monster.update();
-        if(data.pending_frames == 0){
+        _monster.point_at(_player.pos());
+        _bat.update();
+
+        if(_player.hitbox().intersects(_monster.hitbox()) || 
+            _player.hitbox().intersects(_bat.hitbox())){
+            _defeat = true;
+            result.remove_title = true;
+            _player.disable_movement();
+            bn::sound_items::hh_waves.play(1);
+        }
+
+        if(data.pending_frames == 90){
+            //you won
             _victory = true;
+            _player.show_body(data.random.get_int(2));
+            _player.disable_movement();
+            _monster.disable_movement();
+            _bat.disable_movement();
+            bn::bg_palettes::set_brightness(1);
+            bn::sprite_palettes::set_brightness(1);
+        }
+        if(data.pending_frames < 90 && data.pending_frames >= 60){
+            bn::fixed brightness = bn::fixed(data.pending_frames - 60) * bn::fixed(0.033333);
+            bn::bg_palettes::set_brightness(brightness);
+            bn::sprite_palettes::set_brightness(brightness);
+            _bg.set_item(bn::regular_bg_items::hh_gymnasium);
         }
     }
     else
     {
+        //only happens if you lose
         if(_show_result_frames)
         {
             --_show_result_frames;
+            if(_show_result_frames % 2 == 0){
+                //rotate eyeballs every other frame
+                _player.rotate_eyes();
+            }
         }
         else
         {
@@ -74,49 +100,14 @@ mj::game_result haunted_house::play(const mj::game_data& data)
         }
     }
 
+    _player.update();
+
+
     return result;
 }
 
 void haunted_house::fade_out([[maybe_unused]] const mj::game_data& data)
 {
-}
-
-player::player(bn::fixed x, bn::fixed y) : 
-    _pos(x, y), 
-    _sprite(bn::sprite_items::hh_eyes.create_sprite(x,y)) {
-    
-    _sprite.set_scale(2);
-}
-
-void player::update(){
-    if(bn::keypad::up_held()){
-        _pos.set_y(_pos.y() - 1);
-    }
-    if(bn::keypad::down_held()){
-        _pos.set_y(_pos.y() + 1);
-    }
-    if(bn::keypad::left_held()){
-        _pos.set_x(_pos.x() - 1);
-    }
-    if(bn::keypad::right_held()){
-        _pos.set_x(_pos.x() + 1);
-    }
-
-    _sprite.set_position(_pos);
-}
-
-monster::monster(bn::fixed x, bn::fixed y) : 
-    _pos(x, y),
-    _sprite(bn::sprite_items::hh_monster.create_sprite(x,y)),
-    _anim(bn::create_sprite_animate_action_forever(_sprite, 5, 
-            bn::sprite_items::hh_monster.tiles_item(), 0, 1)) {
-    
-    _sprite.set_scale(2);
-}
-
-void monster::update(){
-    _sprite.set_position(_pos);
-    _anim.update();
 }
 
 }
