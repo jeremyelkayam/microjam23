@@ -29,16 +29,16 @@ namespace hh
 {
 
 haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
+    _tempo(recommended_music_tempo(completed_games, data)),
     _bg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data)),
-    _player(0,0),
+    _player(0,0, _tempo),
     _peepantsometer(bn::sprite_items::hh_peepantsometer.create_sprite(-90,30))
     // _spider(40, 40),
     // _bat(40,-40, 2),
     // _ghost(-40,-40,5)
 {
-    BN_LOG("total frames: ", _total_frames);
-    BN_LOG("games done: ", completed_games);
+    BN_LOG("tempo: ", _tempo);
 
     uint8_t first_baddie = data.random.get_int(3);
     uint8_t xquad = data.random.get_int(2) == 1 ? 1 : -1;
@@ -48,11 +48,11 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
                                   data.random.get_fixed(-60, -20);
     uint8_t direction = data.random.get_int(8);
     if(first_baddie == 0){
-        _spider.emplace(xcor, ycor);
+        _spider.emplace(xcor, ycor, _tempo);
     }else if(first_baddie == 1){
-        _bat.emplace(xcor, ycor,direction);
+        _bat.emplace(xcor, ycor,direction, _tempo);
     }else if(first_baddie == 2){
-        _ghost.emplace(xcor, ycor,direction);
+        _ghost.emplace(xcor, ycor,direction, _tempo);
     }else{
         BN_ERROR("buddy you fucked up");
     }
@@ -117,11 +117,13 @@ mj::game_result haunted_house::play(const mj::game_data& data)
         //only happens if you lose
         if(_show_result_frames)
         {
-            _peepantsometer.set_visible(true);
-            if(_player.pos().x() <= _peepantsometer.x() + 30 && 
-               _player.pos().x() >= _peepantsometer.x() - 30){
-                _peepantsometer.set_x(-_peepantsometer.x());
-                BN_LOG("gotta move the peepantsometer");
+            if(!_peepantsometer.visible()){
+                _peepantsometer.set_visible(true);
+                if(_player.pos().x() <= _peepantsometer.x() + 30 && 
+                   _player.pos().x() >= _peepantsometer.x() - 30){
+                    _peepantsometer.set_x(-_peepantsometer.x());
+                    BN_LOG("gotta move the peepantsometer");
+                }
             }
             --_show_result_frames;
             if(_show_result_frames % 2 == 0){
@@ -129,6 +131,7 @@ mj::game_result haunted_house::play(const mj::game_data& data)
                 _player.rotate_eyes();
             }
 
+            //fill the peepantsometer every third frame
             if(!_pee_bars.full() && _show_result_frames % 3 == 0){
                 bn::fixed xcor, ycor;
                 if(_pee_bars.size() < 6){
@@ -144,6 +147,8 @@ mj::game_result haunted_house::play(const mj::game_data& data)
                 _pee_bars.emplace_back(bn::sprite_items::hh_peebar.create_sprite(xcor, ycor));
                 _pee_bars.back().set_scale(2);
             }
+            // _hueshift.update();
+
 
         }
         else

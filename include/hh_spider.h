@@ -9,7 +9,7 @@
 namespace hh {
 class spider : public entity {
 public: 
-    spider(bn::fixed x, bn::fixed y);
+    spider(bn::fixed x, bn::fixed y, bn::fixed tempo);
     void update();
     void point_at(bn::fixed_point pos);
 

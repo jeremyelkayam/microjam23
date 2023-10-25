@@ -9,7 +9,7 @@ namespace hh
 {
 class player : public entity {
 public: 
-    player(bn::fixed x, bn::fixed y);
+    player(bn::fixed x, bn::fixed y, bn::fixed tempo);
     void update();
     void show_body(const uint8_t &rand);
     void take_button_input();

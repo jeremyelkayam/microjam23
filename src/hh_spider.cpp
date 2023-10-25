@@ -6,8 +6,8 @@
 
 namespace hh{
 
-spider::spider(bn::fixed x, bn::fixed y) : 
-    entity(x, y, 16, 16, 0.5, 0),
+spider::spider(bn::fixed x, bn::fixed y, bn::fixed tempo) : 
+    entity(x, y, 16, 16, bn::fixed(0.5) * tempo, 0),
     _sprite(bn::sprite_items::hh_monster.create_sprite(x,y)),
     _anim(bn::create_sprite_animate_action_forever(_sprite, 5, 
             bn::sprite_items::hh_monster.tiles_item(), 0, 1)) {

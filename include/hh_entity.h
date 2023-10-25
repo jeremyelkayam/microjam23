@@ -30,7 +30,6 @@ protected:
     bn::fixed_point _pos;
     bn::fixed_rect _hitbox;
     bn::fixed _speed;
-    bn::fixed _speedup_factor = 1;
 
     //map boundaries
     const bn::fixed _lbound = -110, _rbound = 110, _tbound = -75, _bbound = 60;

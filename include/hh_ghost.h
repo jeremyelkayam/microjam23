@@ -9,7 +9,7 @@
 namespace hh {
 class ghost : public entity {
 public: 
-    ghost(bn::fixed x, bn::fixed y, uint8_t initial_direction);
+    ghost(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo);
     void update();
 
 private:

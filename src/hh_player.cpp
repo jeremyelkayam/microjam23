@@ -7,11 +7,12 @@
 namespace hh 
 {
 
-player::player(bn::fixed x, bn::fixed y) : 
-    entity(x, y, 18, 4, 1, 0),
+player::player(bn::fixed x, bn::fixed y, bn::fixed tempo) : 
+    entity(x, y, 18, 4, bn::fixed(1) * tempo, 0),
     _eyes(bn::sprite_items::hh_eyes.create_sprite(x,y)),
     _body(bn::sprite_items::hh_person_32.create_sprite(x,y)) {
     
+
     _eyes.set_scale(2);
     _body.set_visible(false);
     _body.set_z_order(10);

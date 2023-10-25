@@ -8,6 +8,7 @@ entity::entity(bn::fixed x, bn::fixed y, bn::fixed width, bn::fixed height, bn::
     _speed(speed),
     _direction(direction),
     _can_move(true) {
+    // BN_LOG("speed of entity: ", _speed);
 }
 
 void entity::update(){

@@ -44,6 +44,7 @@ public:
     void fade_out(const mj::game_data& data) final;
 
 private:
+    bn::fixed _tempo;
     bn::regular_bg_ptr _bg;
     int _total_frames;
     int _show_result_frames = 120;
