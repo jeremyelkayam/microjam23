@@ -7,7 +7,8 @@
 
 #include "bn_regular_bg_items_hh_black_bg.h"
 #include "bn_regular_bg_items_hh_gymnasium.h"
-#include "bn_sprite_items_hh_monster.h"
+#include "bn_sprite_items_hh_peepantsometer.h"
+#include "bn_sprite_items_hh_peebar.h"
 #include "bn_bg_palettes.h"
 #include "bn_sprite_palettes.h"
 #include "bn_sound_items.h"
@@ -30,7 +31,8 @@ namespace hh
 haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _bg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data)),
-    _player(0,0)
+    _player(0,0),
+    _peepantsometer(bn::sprite_items::hh_peepantsometer.create_sprite(-90,30))
     // _spider(40, 40),
     // _bat(40,-40, 2),
     // _ghost(-40,-40,5)
@@ -55,6 +57,8 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
         BN_ERROR("buddy you fucked up");
     }
 
+    _peepantsometer.set_scale(2);
+    _peepantsometer.set_visible(false);
 }
 
 void haunted_house::fade_in([[maybe_unused]] const mj::game_data& data)
@@ -113,12 +117,34 @@ mj::game_result haunted_house::play(const mj::game_data& data)
         //only happens if you lose
         if(_show_result_frames)
         {
-            //todo: add pee-pants-ometer
+            _peepantsometer.set_visible(true);
+            if(_player.pos().x() <= _peepantsometer.x() + 30 && 
+               _player.pos().x() >= _peepantsometer.x() - 30){
+                _peepantsometer.set_x(-_peepantsometer.x());
+                BN_LOG("gotta move the peepantsometer");
+            }
             --_show_result_frames;
             if(_show_result_frames % 2 == 0){
                 //rotate eyeballs every other frame
                 _player.rotate_eyes();
             }
+
+            if(!_pee_bars.full() && _show_result_frames % 3 == 0){
+                bn::fixed xcor, ycor;
+                if(_pee_bars.size() < 6){
+                    xcor = _peepantsometer.x() - 12;
+                    ycor = _peepantsometer.y() + 28 - (8 * _pee_bars.size());
+                }else if(_pee_bars.size() < 12){
+                    xcor = _peepantsometer.x() + 12;
+                    ycor = _peepantsometer.y() + 28 - (8 * (_pee_bars.size() - 6));
+                }else{
+                    xcor = _peepantsometer.x();
+                    ycor = _peepantsometer.y() + 28 - (8 * (_pee_bars.size() - 8));
+                }
+                _pee_bars.emplace_back(bn::sprite_items::hh_peebar.create_sprite(xcor, ycor));
+                _pee_bars.back().set_scale(2);
+            }
+
         }
         else
         {

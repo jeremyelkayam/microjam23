@@ -3,6 +3,7 @@
 
 #include "bn_regular_bg_ptr.h"
 #include "bn_optional.h"
+#include <bn_vector.h>
 
 #include "hh_player.h"
 #include "hh_bat.h"
@@ -45,13 +46,15 @@ public:
 private:
     bn::regular_bg_ptr _bg;
     int _total_frames;
-    int _show_result_frames = 60;
+    int _show_result_frames = 120;
     bool _victory = false;
     bool _defeat = false;
     player _player;
     bn::optional<spider> _spider;
     bn::optional<bat> _bat;
     bn::optional<ghost> _ghost;
+    bn::sprite_ptr _peepantsometer;
+    bn::vector<bn::sprite_ptr, 14> _pee_bars;
 
     const uint8_t _normal = 4, _hard = 8; 
 };
