@@ -42,12 +42,15 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     BN_LOG("tempo: ", _tempo);
 
     uint8_t first_baddie = data.random.get_int(3);
-    uint8_t xquad = data.random.get_int(2) == 1 ? 1 : -1;
-    uint8_t yquad = data.random.get_int(2) == 1 ? 1 : -1;
+    int8_t xquad = data.random.get_int(2) == 1 ? 1 : -1;
+    int8_t yquad = data.random.get_int(2) == 1 ? 1 : -1;
     bn::fixed xcor = data.random.get_fixed(20, 110) * xquad;
-    bn::fixed ycor = yquad == 1 ? data.random.get_fixed(20, 75) : 
-                                  data.random.get_fixed(-60, -20);
+    bn::fixed ycor = yquad == 1 ? data.random.get_fixed(20, 60) : 
+                                  data.random.get_fixed(-75, -20);
     uint8_t direction = data.random.get_int(8);
+
+    BN_LOG("first baddie xcor: ", xcor);
+    BN_LOG("first baddie ycor: ", ycor);
     if(first_baddie == 0){
         _spider.emplace(xcor, ycor, _tempo);
     }else if(first_baddie == 1){
