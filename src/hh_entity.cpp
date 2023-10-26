@@ -8,6 +8,7 @@ entity::entity(bn::fixed x, bn::fixed y, bn::fixed width, bn::fixed height, bn::
     _speed(speed),
     _direction(direction),
     _can_move(true) {
+    // BN_LOG("speed of entity: ", _speed);
 }
 
 void entity::update(){
@@ -39,10 +40,10 @@ void entity::update(){
             dy *= -1;
         }
 
-        if(_pos.x() + dx > 110 || _pos.x() + dx < -110){
+        if(_pos.x() + dx > _rbound || _pos.x() + dx < _lbound){
             dx = 0;
         } 
-        if(_pos.y() + dy > 60 || _pos.y() + dy < -75){
+        if(_pos.y() + dy > _bbound || _pos.y() + dy < _tbound){
             dy = 0;
         } 
 

@@ -1,5 +1,5 @@
-#ifndef HH_MONSTER_H
-#define HH_MONSTER_H
+#ifndef HH_GHOST_H
+#define HH_GHOST_H
 
 #include "hh_entity.h"
 #include "bn_sprite_ptr.h"
@@ -7,11 +7,10 @@
 
 
 namespace hh {
-class monster : public entity {
+class ghost : public entity {
 public: 
-    monster(bn::fixed x, bn::fixed y);
+    ghost(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo);
     void update();
-    void point_at(bn::fixed_point pos);
 
 private:
     bn::sprite_ptr _sprite;

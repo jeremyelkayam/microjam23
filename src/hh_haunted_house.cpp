@@ -7,7 +7,8 @@
 
 #include "bn_regular_bg_items_hh_black_bg.h"
 #include "bn_regular_bg_items_hh_gymnasium.h"
-#include "bn_sprite_items_hh_monster.h"
+#include "bn_sprite_items_hh_peepantsometer.h"
+#include "bn_sprite_items_hh_peebar.h"
 #include "bn_bg_palettes.h"
 #include "bn_sprite_palettes.h"
 #include "bn_sound_items.h"
@@ -28,12 +29,37 @@ namespace hh
 {
 
 haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
+    _tempo(recommended_music_tempo(completed_games, data)),
     _bg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data)),
-    _player(0,0),
-    _monster(40, 40),
-    _bat(40,-40)
+    _player(0,0, _tempo),
+    _peepantsometer(bn::sprite_items::hh_peepantsometer.create_sprite(-90,30)),
+    _explosion(_bg, 20)
+    // _spider(40, 40),
+    // _bat(40,-40, 2),
+    // _ghost(-40,-40,5)
 {
+    BN_LOG("tempo: ", _tempo);
+
+    uint8_t first_baddie = data.random.get_int(3);
+    uint8_t xquad = data.random.get_int(2) == 1 ? 1 : -1;
+    uint8_t yquad = data.random.get_int(2) == 1 ? 1 : -1;
+    bn::fixed xcor = data.random.get_fixed(20, 110) * xquad;
+    bn::fixed ycor = yquad == 1 ? data.random.get_fixed(20, 75) : 
+                                  data.random.get_fixed(-60, -20);
+    uint8_t direction = data.random.get_int(8);
+    if(first_baddie == 0){
+        _spider.emplace(xcor, ycor, _tempo);
+    }else if(first_baddie == 1){
+        _bat.emplace(xcor, ycor,direction, _tempo);
+    }else if(first_baddie == 2){
+        _ghost.emplace(xcor, ycor,direction, _tempo);
+    }else{
+        BN_ERROR("buddy you fucked up");
+    }
+
+    _peepantsometer.set_scale(2);
+    _peepantsometer.set_visible(false);
 }
 
 void haunted_house::fade_in([[maybe_unused]] const mj::game_data& data)
@@ -44,42 +70,47 @@ mj::game_result haunted_house::play(const mj::game_data& data)
 {
     mj::game_result result;
 
-    // if(data.pending_frames == 180) {
-
-    // }
     if(! _defeat)
     {
 
-        // if collision with monster
-        //     result.remove_title = true;
-        //     _defeat = true;
         _player.take_button_input();
-        _monster.update();
-        _monster.point_at(_player.pos());
-        _bat.update();
+        if(_spider){
+            _spider->update();
+            _spider->point_at(_player.pos());
 
-        if(_player.hitbox().intersects(_monster.hitbox()) || 
-            _player.hitbox().intersects(_bat.hitbox())){
+        }
+        if(_bat) _bat->update();
+        if(_ghost) _ghost->update();
+
+        if((_spider && _player.hitbox().intersects(_spider->hitbox())) || 
+            (_bat && _player.hitbox().intersects(_bat->hitbox())) || 
+            (_ghost && _player.hitbox().intersects(_ghost->hitbox()))){
             _defeat = true;
             result.remove_title = true;
             _player.disable_movement();
             bn::sound_items::hh_waves.play(1);
         }
 
-        if(data.pending_frames == 90){
+        if(data.pending_frames == (90 / _tempo).round_integer()){
             //you won
             _victory = true;
             _player.show_body(data.random.get_int(2));
             _player.disable_movement();
-            _monster.disable_movement();
-            _bat.disable_movement();
-            bn::bg_palettes::set_brightness(1);
-            bn::sprite_palettes::set_brightness(1);
+
+            //todo: show guys holding up the baddies 
+            if(_spider) _spider->disable_movement();
+            if(_bat) _bat->disable_movement();
+            if(_ghost) _ghost->disable_movement();
+
+
+            // bn::bg_palettes::set_brightness(1);
+            // bn::sprite_palettes::set_brightness(1);
         }
-        if(data.pending_frames < 90 && data.pending_frames >= 60){
-            bn::fixed brightness = bn::fixed(data.pending_frames - 60) * bn::fixed(0.033333);
-            bn::bg_palettes::set_brightness(brightness);
-            bn::sprite_palettes::set_brightness(brightness);
+        //todo: make this a fraction of total frames
+        if(data.pending_frames < (90 / _tempo) && data.pending_frames >= (60 / _tempo)){
+            // bn::fixed brightness = data.pending_frames - (60 / _tempo) * bn::fixed(0.033333);
+            // bn::bg_palettes::set_brightness(brightness);
+            // bn::sprite_palettes::set_brightness(brightness);
             _bg.set_item(bn::regular_bg_items::hh_gymnasium);
         }
     }
@@ -88,11 +119,39 @@ mj::game_result haunted_house::play(const mj::game_data& data)
         //only happens if you lose
         if(_show_result_frames)
         {
+            if(!_peepantsometer.visible()){
+                _peepantsometer.set_visible(true);
+                if(_player.pos().x() <= _peepantsometer.x() + 30 && 
+                   _player.pos().x() >= _peepantsometer.x() - 30){
+                    _peepantsometer.set_x(-_peepantsometer.x());
+                    BN_LOG("gotta move the peepantsometer");
+                }
+            }
             --_show_result_frames;
             if(_show_result_frames % 2 == 0){
                 //rotate eyeballs every other frame
                 _player.rotate_eyes();
             }
+
+            //fill the peepantsometer every third frame
+            if(!_pee_bars.full() && _show_result_frames % 3 == 0){
+                bn::fixed xcor, ycor;
+                if(_pee_bars.size() < 6){
+                    xcor = _peepantsometer.x() - 12;
+                    ycor = _peepantsometer.y() + 28 - (8 * _pee_bars.size());
+                }else if(_pee_bars.size() < 12){
+                    xcor = _peepantsometer.x() + 12;
+                    ycor = _peepantsometer.y() + 28 - (8 * (_pee_bars.size() - 6));
+                }else{
+                    xcor = _peepantsometer.x();
+                    ycor = _peepantsometer.y() + 28 - (8 * (_pee_bars.size() - 8));
+                }
+                _pee_bars.emplace_back(bn::sprite_items::hh_peebar.create_sprite(xcor, ycor));
+                _pee_bars.back().set_scale(2);
+            }
+            _explosion.update();
+
+
         }
         else
         {
@@ -108,6 +167,37 @@ mj::game_result haunted_house::play(const mj::game_data& data)
 
 void haunted_house::fade_out([[maybe_unused]] const mj::game_data& data)
 {
+}
+
+explosion::explosion(bn::regular_bg_ptr &bg, uint8_t fpc) : 
+    _bg(bg),
+    _current_index(0),
+    _fade(bn::bg_palette_fade_to_action(bg.palette(), fpc, 1)){
+        //can probably do this with palette rotation actually
+    _colors.emplace_back(31, 0, 0);
+    _colors.emplace_back(0, 16, 16);
+    _colors.emplace_back(0, 31, 0);
+    _colors.emplace_back(16, 16, 0);
+    _colors.emplace_back(0, 0, 31);
+    _colors.emplace_back(16, 0, 16);
+
+    reset_fade();
+}
+
+void explosion::update(){
+    _fade.update();
+    if(_fade.done()){
+        reset_fade();
+    }
+}
+
+void explosion::reset_fade(){
+    uint8_t next_index = (_current_index + 1) % _colors.size();
+    bn::bg_palette_ptr palette = _bg.palette();
+    palette.set_fade_intensity(0);
+    palette.set_fade_color(_colors.at(next_index));
+    _fade.reset();
+    _current_index = next_index;
 }
 
 }

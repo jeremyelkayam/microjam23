@@ -9,7 +9,7 @@
 namespace hh {
 class bat : public entity {
 public: 
-    bat(bn::fixed x, bn::fixed y);
+    bat(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo);
     void update();
 
 private:
