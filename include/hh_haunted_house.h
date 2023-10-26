@@ -55,6 +55,8 @@ public:
 
     void fade_out(const mj::game_data& data) final;
 
+    void spawn_enemy();
+
 private:
     bn::fixed _tempo;
     bn::regular_bg_ptr _bg;
@@ -71,6 +73,8 @@ private:
     explosion _explosion;
 
     const uint8_t _normal = 4, _hard = 8; 
+
+    void spawn_enemy(const mj::game_data& data);
 };
 
 

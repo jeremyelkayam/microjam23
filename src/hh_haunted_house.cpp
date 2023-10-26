@@ -41,7 +41,14 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
 {
     BN_LOG("tempo: ", _tempo);
 
-    uint8_t first_baddie = data.random.get_int(3);
+    spawn_enemy(data);
+
+    _peepantsometer.set_scale(2);
+    _peepantsometer.set_visible(false);
+}
+
+void haunted_house::spawn_enemy(const mj::game_data& data){
+    uint8_t baddie_type = data.random.get_int(3);
     int8_t xquad = data.random.get_int(2) == 1 ? 1 : -1;
     int8_t yquad = data.random.get_int(2) == 1 ? 1 : -1;
     bn::fixed xcor = data.random.get_fixed(20, 110) * xquad;
@@ -51,18 +58,27 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
 
     BN_LOG("first baddie xcor: ", xcor);
     BN_LOG("first baddie ycor: ", ycor);
-    if(first_baddie == 0){
+    if(baddie_type == 0){
         _spider.emplace(xcor, ycor, _tempo);
-    }else if(first_baddie == 1){
+    }else if(baddie_type == 1){
         _bat.emplace(xcor, ycor,direction, _tempo);
-    }else if(first_baddie == 2){
+    }else if(baddie_type == 2){
+        ycor = _player.pos().y();
+        xcor = _player.pos().x();
+
+        if(direction == 7 || direction == 0 || direction == 1) xcor += 50;
+        if(direction == 1 || direction == 2 || direction == 3) ycor += 50;
+        if(direction == 3 || direction == 4 || direction == 5) xcor -= 50;
+        if(direction == 5 || direction == 6 || direction == 7) ycor -= 50;
+
+        //random variance
+        ycor += data.random.get_fixed(-10, 10);
+        xcor += data.random.get_fixed(-10, 10);        
+        
         _ghost.emplace(xcor, ycor,direction, _tempo);
     }else{
         BN_ERROR("buddy you fucked up");
-    }
-
-    _peepantsometer.set_scale(2);
-    _peepantsometer.set_visible(false);
+    }    
 }
 
 void haunted_house::fade_in([[maybe_unused]] const mj::game_data& data)

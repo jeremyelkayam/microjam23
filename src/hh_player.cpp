@@ -8,7 +8,7 @@ namespace hh
 {
 
 player::player(bn::fixed x, bn::fixed y, bn::fixed tempo) : 
-    entity(x, y, 18, 4, bn::fixed(1) * tempo, 0),
+    entity(x, y, 14, 2, bn::fixed(1) * tempo, 0),
     _eyes(bn::sprite_items::hh_eyes.create_sprite(x,y)),
     _body(bn::sprite_items::hh_person_32.create_sprite(x,y)) {
     

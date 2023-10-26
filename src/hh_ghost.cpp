@@ -7,7 +7,7 @@
 namespace hh{
 
 ghost::ghost(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo) : 
-    entity(x, y, 16, 16, bn::fixed(2) * tempo, initial_direction),
+    entity(x, y, 12, 16, bn::fixed(2) * tempo, initial_direction),
     _sprite(bn::sprite_items::hh_monster.create_sprite(x,y,2)),
     _anim(bn::create_sprite_animate_action_forever(_sprite, 5, 
             bn::sprite_items::hh_monster.tiles_item(), 3, 2)) {
