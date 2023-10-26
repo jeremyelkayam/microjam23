@@ -54,4 +54,25 @@ void entity::update(){
 
 }
 
+bool entity::hitting_wall(){
+    if((_direction == _up_right || _direction == _right || _direction == _down_right)
+       && _pos.x() + _speed > _rbound){
+        return true;
+    }
+    if((_direction == _up_left || _direction == _left || _direction == _down_left)
+       && _pos.x() - _speed < _lbound){
+        return true;
+    }
+    if((_direction == _up_left || _direction == _up || _direction == _up_right)
+       && _pos.y() - _speed < _tbound){
+        return true;
+    }
+    if((_direction == _down_left || _direction == _down || _direction == _down_right)
+       && _pos.y() + _speed > _bbound){
+        return true;
+    }
+
+    return false;
+}
+
 }

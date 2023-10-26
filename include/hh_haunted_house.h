@@ -72,9 +72,9 @@ private:
     bn::vector<bn::sprite_ptr, 14> _pee_bars;
     explosion _explosion;
 
-    const uint8_t _normal = 4, _hard = 8; 
+    const uint8_t _normal = 1, _hard = 2, _very_hard = 5; 
 
-    void spawn_enemy(const mj::game_data& data);
+    void spawn_enemy(const mj::game_data& data, uint8_t enemy_type);
 };
 
 

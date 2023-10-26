@@ -4,19 +4,23 @@
 #include "hh_entity.h"
 #include "bn_sprite_ptr.h"
 #include "bn_sprite_actions.h"
+#include "bn_random.h"
 
 
 namespace hh {
 class bat : public entity {
 public: 
-    bat(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo);
+    bat(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo, bn::random &rand);
     void update();
 
 private:
+    bn::random &_rand;
+    bn::fixed _tempo;
     bn::sprite_ptr _sprite;
     bn::sprite_vertical_flip_toggle_action _anim;
-    const uint8_t _turn_time;
+    uint8_t _turn_time;
     uint8_t _timer;
+    bool _clockwise;
 };
 
 }

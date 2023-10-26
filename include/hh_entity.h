@@ -36,6 +36,8 @@ protected:
 
     uint8_t _direction;
     bool _can_move;
+
+    bool hitting_wall();
 };
 
 }

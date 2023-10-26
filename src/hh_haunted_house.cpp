@@ -41,39 +41,66 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
 {
     BN_LOG("tempo: ", _tempo);
 
-    spawn_enemy(data);
+    //for the first enemy, only spawn spider or bat    
+    spawn_enemy(data, data.random.get_int(0, 2));
+
+    if(completed_games >= _normal){
+        bool ghost = data.random.get_int(0, 2);
+        if(ghost){
+            spawn_enemy(data, 2);
+        }else if(!_spider){
+            spawn_enemy(data, 0);
+        }else if(!_bat){
+            spawn_enemy(data, 1);
+        }
+    }
+    if(completed_games >= _hard && data.random.get_int(0, _very_hard) < completed_games){
+        if(!_ghost){
+            spawn_enemy(data, 2);
+        }else if(!_spider){
+            spawn_enemy(data, 0);
+        }else if(!_bat){
+            spawn_enemy(data, 1);
+        }
+    }
+
 
     _peepantsometer.set_scale(2);
     _peepantsometer.set_visible(false);
 }
 
-void haunted_house::spawn_enemy(const mj::game_data& data){
-    uint8_t baddie_type = data.random.get_int(3);
+void haunted_house::spawn_enemy(const mj::game_data& data, uint8_t enemy_type){
+
     int8_t xquad = data.random.get_int(2) == 1 ? 1 : -1;
     int8_t yquad = data.random.get_int(2) == 1 ? 1 : -1;
-    bn::fixed xcor = data.random.get_fixed(20, 110) * xquad;
+    bn::fixed xcor = data.random.get_fixed(50, 110) * xquad;
     bn::fixed ycor = yquad == 1 ? data.random.get_fixed(20, 60) : 
                                   data.random.get_fixed(-75, -20);
     uint8_t direction = data.random.get_int(8);
 
     BN_LOG("first baddie xcor: ", xcor);
     BN_LOG("first baddie ycor: ", ycor);
-    if(baddie_type == 0){
+    if(enemy_type == 0){
+        BN_ASSERT(!_spider, "to spawn a spider you can't have one already");
         _spider.emplace(xcor, ycor, _tempo);
-    }else if(baddie_type == 1){
-        _bat.emplace(xcor, ycor,direction, _tempo);
-    }else if(baddie_type == 2){
-        ycor = _player.pos().y();
-        xcor = _player.pos().x();
+    }else if(enemy_type == 1){
+        BN_ASSERT(!_bat, "to spawn a bat you can't have one already");
+        _bat.emplace(xcor, ycor,direction, _tempo, data.random);
+    }else if(enemy_type == 2){
+        BN_ASSERT(!_ghost, "to spawn a ghost you can't have one already");
 
-        if(direction == 7 || direction == 0 || direction == 1) xcor += 50;
-        if(direction == 1 || direction == 2 || direction == 3) ycor += 50;
-        if(direction == 3 || direction == 4 || direction == 5) xcor -= 50;
-        if(direction == 5 || direction == 6 || direction == 7) ycor -= 50;
+        //this block of code makes it so that the enemy is pointing at the player
+        // ycor = _player.pos().y();
+        // xcor = _player.pos().x();
 
-        //random variance
-        ycor += data.random.get_fixed(-10, 10);
-        xcor += data.random.get_fixed(-10, 10);        
+        // if(direction == 7 || direction == 0 || direction == 1) xcor += 50;
+        // if(direction == 1 || direction == 2 || direction == 3) ycor += 50;
+        // if(direction == 3 || direction == 4 || direction == 5) xcor -= 50;
+        // if(direction == 5 || direction == 6 || direction == 7) ycor -= 50;
+
+        // //random variance
+        // ycor += data.random.get_fixed(-10, 10);
+        // xcor += data.random.get_fixed(-10, 10);        
         
         _ghost.emplace(xcor, ycor,direction, _tempo);
     }else{
