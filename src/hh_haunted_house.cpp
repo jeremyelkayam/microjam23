@@ -34,7 +34,7 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data)),
     _player(0,0, _tempo),
     _peepantsometer(bn::sprite_items::hh_peepantsometer.create_sprite(-90,30)),
-    _explosion(_bg, 20)
+    _explosion(_bg, 10)
     // _spider(40, 40),
     // _bat(40,-40, 2),
     // _ghost(-40,-40,5)
@@ -171,16 +171,12 @@ void haunted_house::fade_out([[maybe_unused]] const mj::game_data& data)
 
 explosion::explosion(bn::regular_bg_ptr &bg, uint8_t fpc) : 
     _bg(bg),
-    _current_index(0),
     _fade(bn::bg_palette_fade_to_action(bg.palette(), fpc, 1)){
         //can probably do this with palette rotation actually
-    _colors.emplace_back(31, 0, 0);
-    _colors.emplace_back(0, 16, 16);
-    _colors.emplace_back(0, 31, 0);
-    _colors.emplace_back(16, 16, 0);
-    _colors.emplace_back(0, 0, 31);
-    _colors.emplace_back(16, 0, 16);
 
+    bn::bg_palette_ptr palette = _bg.palette();
+    palette.set_rotate_count(-1);
+    
     reset_fade();
 }
 
@@ -191,13 +187,18 @@ void explosion::update(){
     }
 }
 
+//this fades between the 16 colors in the bg palette as it simultaneously rotates 
+//between them.. basically giving us an atari explosion effect
 void explosion::reset_fade(){
-    uint8_t next_index = (_current_index + 1) % _colors.size();
     bn::bg_palette_ptr palette = _bg.palette();
+    BN_LOG("colors count for palette: ", palette.colors_count());
+    uint8_t next_rotation = (palette.rotate_count() + 1) % palette.colors_count();
+    uint8_t next_fade = palette.colors_count() - (next_rotation + 1);
     palette.set_fade_intensity(0);
-    palette.set_fade_color(_colors.at(next_index));
+    palette.set_fade_color(palette.colors().at(next_fade));
+    palette.set_rotate_count(next_rotation);
+
     _fade.reset();
-    _current_index = next_index;
 }
 
 }

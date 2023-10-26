@@ -24,8 +24,6 @@ public:
     void update();
 private:
     bn::regular_bg_ptr &_bg;
-    bn::vector<bn::color,8> _colors;
-    uint8_t _current_index;
     bn::bg_palette_fade_to_action _fade;
     void reset_fade();
 };
