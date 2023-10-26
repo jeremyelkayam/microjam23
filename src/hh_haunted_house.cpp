@@ -33,7 +33,8 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _bg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data)),
     _player(0,0, _tempo),
-    _peepantsometer(bn::sprite_items::hh_peepantsometer.create_sprite(-90,30))
+    _peepantsometer(bn::sprite_items::hh_peepantsometer.create_sprite(-90,30)),
+    _explosion(_bg, 20)
     // _spider(40, 40),
     // _bat(40,-40, 2),
     // _ghost(-40,-40,5)
@@ -90,7 +91,7 @@ mj::game_result haunted_house::play(const mj::game_data& data)
             bn::sound_items::hh_waves.play(1);
         }
 
-        if(data.pending_frames == 90){
+        if(data.pending_frames == (90 / _tempo).round_integer()){
             //you won
             _victory = true;
             _player.show_body(data.random.get_int(2));
@@ -102,13 +103,14 @@ mj::game_result haunted_house::play(const mj::game_data& data)
             if(_ghost) _ghost->disable_movement();
 
 
-            bn::bg_palettes::set_brightness(1);
-            bn::sprite_palettes::set_brightness(1);
+            // bn::bg_palettes::set_brightness(1);
+            // bn::sprite_palettes::set_brightness(1);
         }
-        if(data.pending_frames < 90 && data.pending_frames >= 60){
-            bn::fixed brightness = bn::fixed(data.pending_frames - 60) * bn::fixed(0.033333);
-            bn::bg_palettes::set_brightness(brightness);
-            bn::sprite_palettes::set_brightness(brightness);
+        //todo: make this a fraction of total frames
+        if(data.pending_frames < (90 / _tempo) && data.pending_frames >= (60 / _tempo)){
+            // bn::fixed brightness = data.pending_frames - (60 / _tempo) * bn::fixed(0.033333);
+            // bn::bg_palettes::set_brightness(brightness);
+            // bn::sprite_palettes::set_brightness(brightness);
             _bg.set_item(bn::regular_bg_items::hh_gymnasium);
         }
     }
@@ -147,7 +149,7 @@ mj::game_result haunted_house::play(const mj::game_data& data)
                 _pee_bars.emplace_back(bn::sprite_items::hh_peebar.create_sprite(xcor, ycor));
                 _pee_bars.back().set_scale(2);
             }
-            // _hueshift.update();
+            _explosion.update();
 
 
         }
@@ -165,6 +167,37 @@ mj::game_result haunted_house::play(const mj::game_data& data)
 
 void haunted_house::fade_out([[maybe_unused]] const mj::game_data& data)
 {
+}
+
+explosion::explosion(bn::regular_bg_ptr &bg, uint8_t fpc) : 
+    _bg(bg),
+    _current_index(0),
+    _fade(bn::bg_palette_fade_to_action(bg.palette(), fpc, 1)){
+        //can probably do this with palette rotation actually
+    _colors.emplace_back(31, 0, 0);
+    _colors.emplace_back(0, 16, 16);
+    _colors.emplace_back(0, 31, 0);
+    _colors.emplace_back(16, 16, 0);
+    _colors.emplace_back(0, 0, 31);
+    _colors.emplace_back(16, 0, 16);
+
+    reset_fade();
+}
+
+void explosion::update(){
+    _fade.update();
+    if(_fade.done()){
+        reset_fade();
+    }
+}
+
+void explosion::reset_fade(){
+    uint8_t next_index = (_current_index + 1) % _colors.size();
+    bn::bg_palette_ptr palette = _bg.palette();
+    palette.set_fade_intensity(0);
+    palette.set_fade_color(_colors.at(next_index));
+    _fade.reset();
+    _current_index = next_index;
 }
 
 }

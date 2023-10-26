@@ -2,6 +2,7 @@
 #define HH_HAUNTED_HOUSE_H
 
 #include "bn_regular_bg_ptr.h"
+#include "bn_bg_palette_actions.h"
 #include "bn_optional.h"
 #include <bn_vector.h>
 
@@ -15,6 +16,19 @@
 
 namespace hh
 {
+
+class explosion {
+public:
+    //fpc = frames per color
+    explosion(bn::regular_bg_ptr &bg, uint8_t fpc);
+    void update();
+private:
+    bn::regular_bg_ptr &_bg;
+    bn::vector<bn::color,8> _colors;
+    uint8_t _current_index;
+    bn::bg_palette_fade_to_action _fade;
+    void reset_fade();
+};
 
 class haunted_house : public mj::game
 {
@@ -56,9 +70,11 @@ private:
     bn::optional<ghost> _ghost;
     bn::sprite_ptr _peepantsometer;
     bn::vector<bn::sprite_ptr, 14> _pee_bars;
+    explosion _explosion;
 
     const uint8_t _normal = 4, _hard = 8; 
 };
+
 
 }
 
