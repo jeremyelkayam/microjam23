@@ -30,6 +30,16 @@ private:
     void reset_fade();
 };
 
+class lightbulb {
+public:
+    lightbulb(uint8_t descent_frames);
+    void update();
+private:
+    bn::sprite_ptr _bulb, _radiance;
+    uint8_t _descent_frames, _total_descent_frames;
+
+};
+
 class haunted_house : public mj::game
 {
 
@@ -61,8 +71,8 @@ public:
 
 private:
     bn::regular_bg_ptr _blackbg, _room;
-    int _total_frames, _game_end_frame, _lights_on_end_frame;
     bn::fixed _tempo;
+    int _total_frames, _game_end_frame, _lights_on_end_frame, _lightbulb_appear_frame;
     int _show_result_frames = 120;
     bool _victory = false;
     bool _defeat = false;
@@ -70,6 +80,7 @@ private:
     bn::optional<spider> _spider;
     bn::optional<bat> _bat;
     bn::optional<ghost> _ghost;
+    bn::optional<lightbulb> _lightbulb;
     bn::sprite_ptr _peepantsometer;
     bn::vector<bn::sprite_ptr, 14> _pee_bars;
     explosion _explosion;
@@ -79,6 +90,8 @@ private:
     
 
     void spawn_enemy(const mj::game_data& data, uint8_t enemy_type);
+
+    bn::vector<entity*, 4> all_entities();
 };
 
 

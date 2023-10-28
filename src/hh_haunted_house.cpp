@@ -9,6 +9,8 @@
 #include "bn_regular_bg_items_hh_gymnasium.h"
 #include "bn_sprite_items_hh_peepantsometer.h"
 #include "bn_sprite_items_hh_peebar.h"
+#include "bn_sprite_items_hh_lightbulb.h"
+#include "bn_sprite_items_hh_radiance.h"
 #include "bn_bg_palettes.h"
 #include "bn_sprite_palettes.h"
 #include "bn_sound_items.h"
@@ -31,10 +33,11 @@ namespace hh
 haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _blackbg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _room(bn::regular_bg_items::hh_gymnasium.create_bg((256 - 240) / 2, (256 - 160) / 2)),
-    _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data)),
-    _game_end_frame(_total_frames * 0.3),
-    _lights_on_end_frame(_total_frames * 0.2),
     _tempo(recommended_music_tempo(completed_games, data)),
+    _total_frames((bn::fixed(600) / _tempo).round_integer()),
+    _game_end_frame((_total_frames * bn::fixed(0.3)).round_integer()),
+    _lights_on_end_frame((_total_frames * bn::fixed(0.25)).round_integer()),
+    _lightbulb_appear_frame((_total_frames * bn::fixed(0.4)).round_integer()),
     _player(0,0, _tempo),
     _peepantsometer(bn::sprite_items::hh_peepantsometer.create_sprite(-90,30)),
     _explosion(_blackbg, 10)
@@ -137,6 +140,7 @@ mj::game_result haunted_house::play(const mj::game_data& data)
         }
         if(_bat) _bat->update();
         if(_ghost) _ghost->update();
+        if(_lightbulb) _lightbulb->update();
 
         if((_spider && _player.hitbox().intersects(_spider->hitbox())) || 
             (_bat && _player.hitbox().intersects(_bat->hitbox())) || 
@@ -147,18 +151,20 @@ mj::game_result haunted_house::play(const mj::game_data& data)
             bn::sound_items::hh_waves.play(1);
         }
 
+        if(data.pending_frames == _lightbulb_appear_frame){
+            _lightbulb.emplace(_lightbulb_appear_frame - _game_end_frame);
+        }
+
         if(data.pending_frames == _game_end_frame){
             //you won
             _victory = true;
-            _player.disable_movement();
 
             //todo: show guys holding up the baddies 
-            if(_spider) _spider->disable_movement();
-            if(_bat) _bat->disable_movement();
-            if(_ghost) _ghost->disable_movement();
+            for(entity *e : all_entities()){
+                e->disable_movement();
+            }
 
         }
-        //todo: make this a fraction of total frames
         if(data.pending_frames < _game_end_frame && data.pending_frames >= _lights_on_end_frame){
             bn::fixed window_scale_factor = bn::fixed(_game_end_frame - data.pending_frames) / bn::fixed(_game_end_frame - _lights_on_end_frame);
             bn::rect_window iw = bn::rect_window::internal();
@@ -168,14 +174,13 @@ mj::game_result haunted_house::play(const mj::game_data& data)
             iw.set_bottom(80 * window_scale_factor);
 
             //todo: turn this into a loop thru all entities
-            if(_player.hitbox().intersects(iw.boundaries())){
-                //show your body when you are illuminated by the light ... 
-                _player.lights_on(data.random);
+
+            for(entity *e : all_entities()){
+                if(e->hitbox().intersects(iw.boundaries())){
+                    //show your body when you are illuminated by the light ... 
+                    e->lights_on(data.random);
+                }
             }
-            if(_ghost && _ghost->hitbox().intersects(iw.boundaries())){
-                _ghost->lights_on(data.random);
-                //todo: lights on should only run once
-            }            
         }
     }
     else
@@ -233,6 +238,16 @@ void haunted_house::fade_out([[maybe_unused]] const mj::game_data& data)
 {
 }
 
+bn::vector<entity*, 4> haunted_house::all_entities(){
+    bn::vector<entity*, 4> result;
+    result.emplace_back(&_player);
+    if(_spider) result.emplace_back(_spider.get());
+    if(_bat) result.emplace_back(_bat.get());
+    if(_ghost) result.emplace_back(_ghost.get());
+
+    return result;
+}
+
 explosion::explosion(bn::regular_bg_ptr &bg, uint8_t fpc) : 
     _blackbg(bg),
     _fade(bn::bg_palette_fade_to_action(bg.palette(), fpc, 1)){
@@ -255,7 +270,6 @@ void explosion::update(){
 //between them.. basically giving us an atari explosion effect
 void explosion::reset_fade(){
     bn::bg_palette_ptr palette = _blackbg.palette();
-    BN_LOG("colors count for palette: ", palette.colors_count());
     uint8_t next_rotation = (palette.rotate_count() + 1) % palette.colors_count();
     uint8_t next_fade = palette.colors_count() - (next_rotation + 1);
     palette.set_fade_intensity(0);
@@ -263,6 +277,27 @@ void explosion::reset_fade(){
     palette.set_rotate_count(next_rotation);
 
     _fade.reset();
+}
+
+lightbulb::lightbulb(uint8_t descent_frames) : 
+    _bulb(bn::sprite_items::hh_lightbulb.create_sprite(0, -80 - 32)),
+    _radiance(bn::sprite_items::hh_radiance.create_sprite(0, -80 + 48)),
+    _descent_frames(descent_frames),
+    _total_descent_frames(descent_frames){
+    _radiance.set_visible(false);
+}
+
+void lightbulb::update(){
+    if(_descent_frames){
+        bn::fixed dist = bn::fixed(64) * bn::fixed(_descent_frames) / bn::fixed(_total_descent_frames);
+        _bulb.set_y(-80 -32 + (64 - dist));
+
+        --_descent_frames;
+
+    }else{
+        _bulb.set_item(bn::sprite_items::hh_lightbulb, 1);
+        _radiance.set_visible(true);
+    }
 }
 
 }
