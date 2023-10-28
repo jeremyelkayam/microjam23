@@ -34,7 +34,7 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _blackbg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _room(bn::regular_bg_items::hh_gymnasium.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _tempo(recommended_music_tempo(completed_games, data)),
-    _total_frames((bn::fixed(300) / _tempo).round_integer()),
+    _total_frames((bn::fixed(360) / _tempo).round_integer()),
     _game_end_frame((_total_frames * bn::fixed(0.3)).round_integer()),
     _lights_on_end_frame((_total_frames * bn::fixed(0.25)).round_integer()),
     _lightbulb_appear_frame((_total_frames * bn::fixed(0.4)).round_integer()),
@@ -303,11 +303,39 @@ lightbulb::lightbulb(uint8_t descent_frames) :
     _bulb(bn::sprite_items::hh_lightbulb.create_sprite(0, -80 - 32)),
     _radiance(bn::sprite_items::hh_radiance.create_sprite(0, -80 + 48)),
     _descent_frames(descent_frames),
-    _total_descent_frames(descent_frames){
+    _total_descent_frames(descent_frames),
+    _radiance_scale(_radiance, 30, 1.2)
+    // _swing_time(120),
+    // _timer(_swing_time)
+     {
     _radiance.set_visible(false);
+    _radiance.set_blending_enabled(true);
+    bn::blending::set_transparency_alpha(0.3);
+    // _bulb.set_rotation_angle(350);
 }
 
 void lightbulb::update(){
+
+    // if(_timer){
+    //     uint8_t half_swing_time = _swing_time / 2;
+    //     bn::fixed new_angle;
+        
+    //     if(_timer < half_swing_time){
+    //         new_angle = 355 + 10 * 
+    //             bn::fixed(_timer) / bn::fixed(half_swing_time);
+    //     }else{
+    //         new_angle = 5 - 10 * 
+    //             bn::fixed(_timer - half_swing_time) / bn::fixed(half_swing_time);
+    //     }
+    //     if(new_angle > 360) new_angle -= 360;
+    //     if(new_angle < 0) new_angle += 360;
+        
+    //     _bulb.set_rotation_angle(new_angle);
+    //     --_timer;
+    // }else{
+    //     _timer = _swing_time;
+    // }
+
     if(_descent_frames){
         bn::fixed dist = bn::fixed(64) * bn::fixed(_descent_frames) / bn::fixed(_total_descent_frames);
         _bulb.set_y(-80 -32 + (64 - dist));
@@ -317,6 +345,9 @@ void lightbulb::update(){
     }else{
         _bulb.set_item(bn::sprite_items::hh_lightbulb, 1);
         _radiance.set_visible(true);
+    }
+    if(_radiance.visible()){
+        _radiance_scale.update();
     }
 }
 

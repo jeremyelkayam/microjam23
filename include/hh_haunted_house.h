@@ -6,7 +6,8 @@
 #include "bn_optional.h"
 #include "bn_rect_window.h"
 #include "bn_rect_window_actions.h"
-#include <bn_vector.h>
+#include "bn_blending.h"
+#include "bn_vector.h"
 
 #include "hh_player.h"
 #include "hh_bat.h"
@@ -39,7 +40,9 @@ public:
 private:
     bn::sprite_ptr _bulb, _radiance;
     uint8_t _descent_frames, _total_descent_frames;
+    bn::sprite_scale_loop_action _radiance_scale;
 
+    // , _swing_time, _timer;
 };
 
 class haunted_house : public mj::game
