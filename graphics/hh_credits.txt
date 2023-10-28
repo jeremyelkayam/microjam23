@@ -1,6 +1,16 @@
-hh_eyes.bmp
 hh_black_bg.bmp
+hh_eyes.bmp
+hh_gymnasium.bmp
+hh_ken.bmp
+hh_lightbulb.bmp
 hh_monster.bmp
-	Jeremy Elkayam
+hh_peebar.bmp
+hh_peepantsometer.bmp
+hh_person_32.bmp
+hh_radiance.bmp
+hh_true_ghost.bmp
+hh_true_spider.bmp
+hh_true_spider_shaggy.bmp
+	Jeremy Elkayam, Michael Elkayam
 	CC0 1.0 Universal (CC0 1.0)
 	jne@jeremyelkayam.com
