@@ -11,7 +11,8 @@ namespace hh {
 class bat : public entity {
 public: 
     bat(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo, bn::random &rand);
-    void update();
+    virtual void update();
+    virtual void lights_on(bn::random &rand) {}
 
 private:
     bn::random &_rand;

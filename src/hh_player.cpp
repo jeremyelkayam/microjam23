@@ -83,13 +83,16 @@ void player::update(){
     }
 }
 
-void player::show_body(bn::random &rand){
-    _body.set_x(_pos.x());
-    _body.set_y(_pos.y() + 6);
-    _body.set_visible(true);
-    uint8_t costume = rand.get_int(2);
-    if(costume == 1){
-        _body.set_item(bn::sprite_items::hh_ken);
+void player::lights_on(bn::random &rand){
+    if(!_lights_on){
+        _body.set_x(_pos.x());
+        _body.set_y(_pos.y() + 6);
+        _body.set_visible(true);
+        uint8_t costume = rand.get_int(2);
+        if(costume == 1){
+            _body.set_item(bn::sprite_items::hh_ken);
+        }
+        _lights_on = true;
     }
 }
 

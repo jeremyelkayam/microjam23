@@ -111,7 +111,8 @@ void haunted_house::spawn_enemy(const mj::game_data& data, uint8_t enemy_type){
         // ycor += data.random.get_fixed(-10, 10);
         // xcor += data.random.get_fixed(-10, 10);        
         
-        _ghost.emplace(xcor, ycor,direction, _tempo);
+        //the random int just means a 1/4 chance of being true
+        _ghost.emplace(xcor, ycor,direction, _tempo, !data.random.get_int(4));
     }else{
         BN_ERROR("buddy you fucked up");
     }    
@@ -156,9 +157,6 @@ mj::game_result haunted_house::play(const mj::game_data& data)
             if(_bat) _bat->disable_movement();
             if(_ghost) _ghost->disable_movement();
 
-
-            // bn::bg_palettes::set_brightness(1);
-            // bn::sprite_palettes::set_brightness(1);
         }
         //todo: make this a fraction of total frames
         if(data.pending_frames < _game_end_frame && data.pending_frames >= _lights_on_end_frame){
@@ -168,10 +166,16 @@ mj::game_result haunted_house::play(const mj::game_data& data)
             iw.set_right(120 * window_scale_factor);
             iw.set_top( - 80 * window_scale_factor);
             iw.set_bottom(80 * window_scale_factor);
+
+            //todo: turn this into a loop thru all entities
             if(_player.hitbox().intersects(iw.boundaries())){
                 //show your body when you are illuminated by the light ... 
-                _player.show_body(data.random);
+                _player.lights_on(data.random);
             }
+            if(_ghost && _ghost->hitbox().intersects(iw.boundaries())){
+                _ghost->lights_on(data.random);
+                //todo: lights on should only run once
+            }            
         }
     }
     else

@@ -7,7 +7,8 @@ entity::entity(bn::fixed x, bn::fixed y, bn::fixed width, bn::fixed height, bn::
     _hitbox(x, y, width, height),
     _speed(speed),
     _direction(direction),
-    _can_move(true) {
+    _can_move(true),
+    _lights_on(false) {
     // BN_LOG("speed of entity: ", _speed);
 }
 
