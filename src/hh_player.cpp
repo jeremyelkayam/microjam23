@@ -10,7 +10,9 @@ namespace hh
 player::player(bn::fixed x, bn::fixed y, bn::fixed tempo) : 
     entity(x, y, 14, 2, bn::fixed(1) * tempo, 0),
     _eyes(bn::sprite_items::hh_eyes.create_sprite(x,y)),
-    _body(bn::sprite_items::hh_person_32.create_sprite(x,y)) {
+    _body(bn::sprite_items::hh_person_32.create_sprite(x,y)),
+    _footsteps_interval(30),
+    _footsteps_timer(0) {
     
     _body.set_visible(false);
     _body.set_z_order(10);
@@ -19,6 +21,19 @@ player::player(bn::fixed x, bn::fixed y, bn::fixed tempo) :
 
 void player::update(){
     entity::update();
+
+    if(_can_move && (bn::keypad::up_held() || 
+       bn::keypad::down_held() || 
+       bn::keypad::left_held() || 
+       bn::keypad::right_held())){
+        if(_footsteps_timer){
+            --_footsteps_timer;
+        }else{
+            bn::sound_items::hh_footstep.play(0.5);
+            _footsteps_timer = _footsteps_interval;
+        }
+
+    }
 
     //this is dumb and stupid and could be done in way less code but 
     //i dont want to fix it lol !!! 

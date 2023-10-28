@@ -19,13 +19,14 @@ namespace
 {
     constexpr bn::string_view code_credits[] = { "Jeremy Elkayam, Michael Elkayam" };
     constexpr bn::string_view graphics_credits[] = { "Jeremy Elkayam, Michael Elkayam" };
+    constexpr bn::string_view sfx_credits[] = { "Michael Elkayam, 3Maze" };
 }
 
 MJ_GAME_LIST_ADD(hh::haunted_house)
 MJ_GAME_LIST_ADD_CODE_CREDITS(code_credits)
 MJ_GAME_LIST_ADD_GRAPHICS_CREDITS(graphics_credits)
 // MJ_GAME_LIST_ADD_MUSIC_CREDITS(music_credits)
-// MJ_GAME_LIST_ADD_SFX_CREDITS(sfx_credits)
+MJ_GAME_LIST_ADD_SFX_CREDITS(sfx_credits)
 
 namespace hh
 {
@@ -112,9 +113,6 @@ void haunted_house::spawn_enemy(const mj::game_data& data, uint8_t enemy_type){
     ycor = yquad == 1 ? data.random.get_fixed(20, 60) : 
                                   data.random.get_fixed(-75, -20);
     uint8_t direction = data.random.get_int(8);
-
-    // BN_LOG("spawning baddie at xcor: ", xcor);
-    // BN_LOG("spawning baddie at ycor: ", ycor);
 
     bn::fixed speedup_factor = 1.0;
     switch(_difficulty_level){
@@ -209,7 +207,6 @@ mj::game_result haunted_house::play(const mj::game_data& data)
             for(entity *e : all_entities()){
                 e->disable_movement();
             }
-
         }
         if(data.pending_frames < _game_end_frame && data.pending_frames >= _lights_on_end_frame){
             bn::fixed window_scale_factor = bn::fixed(_game_end_frame - data.pending_frames) / bn::fixed(_game_end_frame - _lights_on_end_frame);
@@ -366,6 +363,11 @@ void lightbulb::update(){
         _bulb.set_y(-80 -32 + (64 - dist));
 
         --_descent_frames;
+
+        if(_descent_frames == 0){
+            bn::sound_items::hh_switch_on.play(1);
+            bn::sound_items::hh_ambient.play(0.25);
+        }
 
     }else{
         _bulb.set_item(bn::sprite_items::hh_lightbulb, 1);

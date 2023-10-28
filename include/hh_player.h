@@ -4,6 +4,7 @@
 #include "bn_sprite_ptr.h"
 #include "hh_entity.h"
 #include "bn_random.h"
+#include "bn_sound_items.h"
 
 
 namespace hh
@@ -18,6 +19,8 @@ public:
 
 private:
     bn::sprite_ptr _eyes, _body;
+    const uint8_t _footsteps_interval;
+    uint8_t _footsteps_timer;
 };
 
 }
