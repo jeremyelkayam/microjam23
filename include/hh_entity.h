@@ -6,6 +6,7 @@
 #include "bn_window.h"
 #include "bn_random.h"
 #include "bn_sound_items.h"
+#include "mj_game_data.h"
 
 
 namespace hh {
@@ -13,7 +14,7 @@ class entity {
 public: 
     virtual ~entity() = default;
     entity(bn::fixed x, bn::fixed y, bn::fixed width, bn::fixed height, bn::fixed speed, uint8_t direction);
-    virtual void update();
+    virtual void update(const mj::game_data& data);
     const bn::fixed_rect &hitbox() {return _hitbox;}
     const bn::fixed_point &pos() {return _pos;}
     virtual void disable_movement() { _can_move = false;}

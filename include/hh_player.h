@@ -12,7 +12,7 @@ namespace hh
 class player : public entity {
 public: 
     player(bn::fixed x, bn::fixed y, bn::fixed tempo);
-    virtual void update(bn::random &rand);
+    virtual void update(const mj::game_data& data);
     virtual void lights_on(bn::random &rand);
     void take_button_input();
     void rotate_eyes();

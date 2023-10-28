@@ -16,8 +16,8 @@ spider::spider(bn::fixed x, bn::fixed y, bn::fixed tempo) :
     
 }
 
-void spider::update(){
-    entity::update();
+void spider::update(const mj::game_data& data){
+    entity::update(data);
     if(_can_move){
         _sprite.set_position(_pos);
         _anim.update();

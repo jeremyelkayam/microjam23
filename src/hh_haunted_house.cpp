@@ -41,6 +41,7 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _lightbulb_appear_frame((_total_frames * bn::fixed(0.4)).round_integer()),
     _player(0,0, _tempo),
     _peepantsometer(bn::sprite_items::hh_peepantsometer.create_sprite(-90,30)),
+    _ambient_sound_timer(90),
     _explosion(_blackbg, 10),
     _difficulty_level(recommended_difficulty_level(completed_games, data))
 {
@@ -181,12 +182,12 @@ mj::game_result haunted_house::play(const mj::game_data& data)
 
         _player.take_button_input();
         if(_spider){
-            _spider->update();
             _spider->point_at(_player.pos());
+            _spider->update(data);
 
         }
-        if(_bat) _bat->update();
-        if(_ghost) _ghost->update();
+        if(_bat) _bat->update(data);
+        if(_ghost) _ghost->update(data);
         if(_lightbulb) _lightbulb->update();
 
         if((_spider && _player.hitbox().intersects(_spider->hitbox())) || 
@@ -273,7 +274,7 @@ mj::game_result haunted_house::play(const mj::game_data& data)
         }
     }
 
-    _player.update(data.random);
+    _player.update(data);
 
 
     return result;

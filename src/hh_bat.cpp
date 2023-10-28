@@ -16,8 +16,8 @@ bat::bat(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo, b
     _clockwise(_rand.get_int(2)) {    
 }
 
-void bat::update(){
-    entity::update();
+void bat::update(const mj::game_data& data){
+    entity::update(data);
     _sprite.set_position(_pos);
     _anim.update();
 

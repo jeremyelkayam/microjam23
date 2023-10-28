@@ -24,8 +24,8 @@ player::player(bn::fixed x, bn::fixed y, bn::fixed tempo) :
 }
 
 
-void player::update(bn::random &rand){
-    entity::update();
+void player::update(const mj::game_data& data){
+    entity::update(data);
 
     if(_can_move && (bn::keypad::up_held() || 
        bn::keypad::down_held() || 
@@ -35,7 +35,7 @@ void player::update(bn::random &rand){
             --_footsteps_timer;
         }else{
 
-            _footstep_sounds.at(rand.get_int(_footstep_sounds.size())).play(0.5);
+            _footstep_sounds.at(data.random.get_int(_footstep_sounds.size())).play(0.5);
             _footsteps_timer = _footsteps_interval;
         }
 

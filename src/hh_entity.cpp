@@ -11,7 +11,7 @@ entity::entity(bn::fixed x, bn::fixed y, bn::fixed width, bn::fixed height, bn::
     _lights_on(false) {
 }
 
-void entity::update(){
+void entity::update(const mj::game_data& data){
     //if your direction is center, you are not moving
 
 

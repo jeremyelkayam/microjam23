@@ -21,13 +21,13 @@ ghost::ghost(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed temp
 
 }
 
-void ghost::update(){
+void ghost::update(const mj::game_data& data){
 
     if(_can_move && hitting_wall()){
         bounce_off_walls();
     }
 
-    entity::update();
+    entity::update(data);
     _sprite.set_position(_pos);
 
     if(_can_move){
