@@ -14,7 +14,6 @@ bat::bat(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo, b
     _turn_time(((bn::fixed(20) / tempo) * rand.get_fixed(0.75, 1.5)).round_integer()),
     _timer(_turn_time),
     _clockwise(_rand.get_int(2)) {    
-    _sprite.set_scale(2);
 }
 
 void bat::update(){

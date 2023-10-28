@@ -12,8 +12,6 @@ player::player(bn::fixed x, bn::fixed y, bn::fixed tempo) :
     _eyes(bn::sprite_items::hh_eyes.create_sprite(x,y)),
     _body(bn::sprite_items::hh_person_32.create_sprite(x,y)) {
     
-
-    _eyes.set_scale(2);
     _body.set_visible(false);
     _body.set_z_order(10);
 }
@@ -76,10 +74,10 @@ void player::update(){
 
     //annoying and stupid graphical adjustments .... 
     if(_eyes.vertical_flip()){
-        _eyes.set_y(_pos.y() - 3);
+        _eyes.set_y(_pos.y() - 2);
     }
     if(_eyes.horizontal_flip()){
-        _eyes.set_x(_pos.x() - 1);
+        // _eyes.set_x(_pos.x() - 1);
     }
 }
 

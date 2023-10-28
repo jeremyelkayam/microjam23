@@ -19,9 +19,6 @@ ghost::ghost(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed temp
             2, 3));
     }
 
-    //todo: just fucking scale up the 8x8s to 16x16s because they
-    //are causing promblems    
-    _sprite.set_scale(2);
 }
 
 void ghost::update(){
@@ -64,8 +61,6 @@ void ghost::lights_on(bn::random &rand){
             }
         }
         _sprite.set_item(bn::sprite_items::hh_true_ghost, graphics_index);
-        //todo: remove this
-        _sprite.set_scale(1);
         _lights_on = true;
     }
 }

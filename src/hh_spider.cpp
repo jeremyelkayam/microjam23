@@ -12,7 +12,6 @@ spider::spider(bn::fixed x, bn::fixed y, bn::fixed tempo) :
     _anim(bn::create_sprite_animate_action_forever(_sprite, 5, 
             bn::sprite_items::hh_monster.tiles_item(), 0, 1)) {
     
-    _sprite.set_scale(2);
 }
 
 void spider::update(){
