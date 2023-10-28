@@ -6,7 +6,7 @@
 namespace hh{
 
 bat::bat(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo, bn::random &rand) : 
-    entity(x, y, 16, 16, bn::fixed(2) * tempo, initial_direction),
+    entity(x, y, 16, 16, bn::fixed(1.5) * tempo, initial_direction),
     _rand(rand),
     _tempo(tempo),
     _sprite(bn::sprite_items::hh_monster.create_sprite(x,y, 4)),
@@ -23,9 +23,10 @@ void bat::update(){
 
     //bouncing off walls logic. kinda jank
     if(hitting_wall()){
-        _timer = _turn_time;
-        int8_t turn_amount = _clockwise ? 2 : -2;
-        _direction = (_direction + turn_amount) % 8;
+        bounce_off_walls();
+    //     _timer = _turn_time;
+    //     int8_t turn_amount = _clockwise ? 2 : -2;
+    //     _direction = (_direction + turn_amount) % 8;
     }
 
     if(_timer == 0){

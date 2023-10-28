@@ -43,6 +43,12 @@ protected:
     bool _can_move, _lights_on;
 
     bool hitting_wall();
+    bool hitting_left_wall();
+    bool hitting_right_wall();
+    bool hitting_top_wall();
+    bool hitting_bottom_wall();
+
+    void bounce_off_walls();
 };
 
 }

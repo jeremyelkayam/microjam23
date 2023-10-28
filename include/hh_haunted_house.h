@@ -19,6 +19,8 @@
 namespace hh
 {
 
+
+
 class explosion {
 public:
     //fpc = frames per color
@@ -84,8 +86,9 @@ private:
     bn::sprite_ptr _peepantsometer;
     bn::vector<bn::sprite_ptr, 14> _pee_bars;
     explosion _explosion;
+    mj::difficulty_level _difficulty_level;
 
-    const uint8_t _normal = 1, _hard = 2, _very_hard = 5; 
+    // const uint8_t n = 1, _hard = 2, _very_hard = 5; 
     
     
 

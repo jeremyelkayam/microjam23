@@ -34,14 +34,17 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _blackbg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _room(bn::regular_bg_items::hh_gymnasium.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _tempo(recommended_music_tempo(completed_games, data)),
-    _total_frames((bn::fixed(600) / _tempo).round_integer()),
+    _total_frames((bn::fixed(300) / _tempo).round_integer()),
     _game_end_frame((_total_frames * bn::fixed(0.3)).round_integer()),
     _lights_on_end_frame((_total_frames * bn::fixed(0.25)).round_integer()),
     _lightbulb_appear_frame((_total_frames * bn::fixed(0.4)).round_integer()),
     _player(0,0, _tempo),
     _peepantsometer(bn::sprite_items::hh_peepantsometer.create_sprite(-90,30)),
-    _explosion(_blackbg, 10)
+    _explosion(_blackbg, 10),
+    _difficulty_level(recommended_difficulty_level(completed_games, data))
 {
+    //testing purposes only
+    _difficulty_level = mj::difficulty_level::HARD;
     
     BN_LOG("tempo: ", _tempo);
     BN_LOG("total frames: ", _total_frames);
@@ -56,7 +59,7 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     //for the first enemy, only spawn spider or bat    
     spawn_enemy(data, data.random.get_int(0, 2));
 
-    if(completed_games >= _normal){
+    if(_difficulty_level == mj::difficulty_level::NORMAL || _difficulty_level == mj::difficulty_level::HARD){
         bool ghost = data.random.get_int(0, 2);
         if(ghost){
             spawn_enemy(data, 2);
@@ -66,7 +69,7 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
             spawn_enemy(data, 1);
         }
     }
-    if(completed_games >= _hard && data.random.get_int(0, _very_hard) < completed_games){
+    if(_difficulty_level == mj::difficulty_level::HARD){
         if(!_ghost){
             spawn_enemy(data, 2);
         }else if(!_spider){
@@ -85,19 +88,33 @@ void haunted_house::spawn_enemy(const mj::game_data& data, uint8_t enemy_type){
 
     int8_t xquad = data.random.get_int(2) == 1 ? 1 : -1;
     int8_t yquad = data.random.get_int(2) == 1 ? 1 : -1;
-    bn::fixed xcor = data.random.get_fixed(50, 110) * xquad;
-    bn::fixed ycor = yquad == 1 ? data.random.get_fixed(20, 60) : 
+    bn::fixed xcor, ycor;
+    xcor = data.random.get_fixed(50, 110) * xquad;
+    ycor = yquad == 1 ? data.random.get_fixed(20, 60) : 
                                   data.random.get_fixed(-75, -20);
     uint8_t direction = data.random.get_int(8);
 
-    BN_LOG("first baddie xcor: ", xcor);
-    BN_LOG("first baddie ycor: ", ycor);
+    // BN_LOG("spawning baddie at xcor: ", xcor);
+    // BN_LOG("spawning baddie at ycor: ", ycor);
+
+    bn::fixed speedup_factor = 1.0;
+    switch(_difficulty_level){
+        case mj::difficulty_level::NORMAL:
+            speedup_factor = data.random.get_fixed(1.0, 1.2);
+            break;
+        case mj::difficulty_level::HARD:
+            speedup_factor = data.random.get_fixed(1.1, 1.4);
+            break;
+        default:
+            break;
+    }    
     if(enemy_type == 0){
         BN_ASSERT(!_spider, "to spawn a spider you can't have one already");
-        _spider.emplace(xcor, ycor, _tempo);
+
+        _spider.emplace(xcor, ycor, _tempo * speedup_factor);
     }else if(enemy_type == 1){
         BN_ASSERT(!_bat, "to spawn a bat you can't have one already");
-        _bat.emplace(xcor, ycor,direction, _tempo, data.random);
+        _bat.emplace(xcor, ycor,direction, _tempo * speedup_factor, data.random);
     }else if(enemy_type == 2){
         BN_ASSERT(!_ghost, "to spawn a ghost you can't have one already");
 
@@ -114,8 +131,12 @@ void haunted_house::spawn_enemy(const mj::game_data& data, uint8_t enemy_type){
         // ycor += data.random.get_fixed(-10, 10);
         // xcor += data.random.get_fixed(-10, 10);        
         
+        //ghosts now only move diagonally so it is harder
+        if(direction % 2 == 0) direction = (direction + 1) % 8;
+
+
         //the random int just means a 1/4 chance of being true
-        _ghost.emplace(xcor, ycor,direction, _tempo, !data.random.get_int(4));
+        _ghost.emplace(xcor, ycor,direction, _tempo * speedup_factor, !data.random.get_int(4));
     }else{
         BN_ERROR("buddy you fucked up");
     }    
@@ -193,7 +214,6 @@ mj::game_result haunted_house::play(const mj::game_data& data)
                 if(_player.pos().x() <= _peepantsometer.x() + 30 && 
                    _player.pos().x() >= _peepantsometer.x() - 30){
                     _peepantsometer.set_x(-_peepantsometer.x());
-                    BN_LOG("gotta move the peepantsometer");
                 }
             }
             --_show_result_frames;

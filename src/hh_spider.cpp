@@ -8,8 +8,8 @@
 
 namespace hh{
 
-spider::spider(bn::fixed x, bn::fixed y, bn::fixed tempo, bool faster) : 
-    entity(x, y, 16, 16, faster ? bn::fixed(0.65) : bn::fixed(0.5) * tempo, 0),
+spider::spider(bn::fixed x, bn::fixed y, bn::fixed tempo) : 
+    entity(x, y, 16, 16, bn::fixed(0.5) * tempo, 0),
     _sprite(bn::sprite_items::hh_monster.create_sprite(x,y)),
     _anim(bn::create_sprite_animate_action_forever(_sprite, 5, 
             bn::sprite_items::hh_monster.tiles_item(), 0, 1)) {
@@ -34,15 +34,7 @@ void spider::point_at(bn::fixed_point pos){
     angle *= 8;
     //convert it back to my dumbass way of measuring these stupid things
     int8_t maybe_negative_dir = angle.round_integer();
-    if(maybe_negative_dir < 0){
-        _direction = 8 + maybe_negative_dir;
-    }else {
-        _direction= maybe_negative_dir;
-    }
-
-    // BN_LOG("angle: ", angle);
-    // BN_LOG("direction of 8: ", _direction);
-    
+    _direction = (8 + maybe_negative_dir) % 8;
 }
 
 void spider::lights_on(bn::random &rand){

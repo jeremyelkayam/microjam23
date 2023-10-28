@@ -8,7 +8,7 @@
 namespace hh{
 
 ghost::ghost(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo, bool pacman_ghost) : 
-    entity(x, y, 12, 16, bn::fixed(1) * tempo, initial_direction),
+    entity(x, y, 12, 16, bn::fixed(1.5) * tempo, initial_direction),
     _sprite(bn::sprite_items::hh_monster.create_sprite(x,y,pacman_ghost ? 5 : 2)) {
     
     if(pacman_ghost){
@@ -24,8 +24,7 @@ ghost::ghost(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed temp
 void ghost::update(){
 
     if(hitting_wall()){
-        //mirror the direction so it bounces off the walls
-        _direction = (_direction + 4) % 8;
+        bounce_off_walls();
     }
 
     entity::update();

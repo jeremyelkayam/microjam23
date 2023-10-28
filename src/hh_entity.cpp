@@ -9,7 +9,6 @@ entity::entity(bn::fixed x, bn::fixed y, bn::fixed width, bn::fixed height, bn::
     _direction(direction),
     _can_move(true),
     _lights_on(false) {
-    // BN_LOG("speed of entity: ", _speed);
 }
 
 void entity::update(){
@@ -56,24 +55,48 @@ void entity::update(){
 }
 
 bool entity::hitting_wall(){
-    if((_direction == _up_right || _direction == _right || _direction == _down_right)
-       && _pos.x() + _speed > _rbound){
-        return true;
-    }
-    if((_direction == _up_left || _direction == _left || _direction == _down_left)
-       && _pos.x() - _speed < _lbound){
-        return true;
-    }
-    if((_direction == _up_left || _direction == _up || _direction == _up_right)
-       && _pos.y() - _speed < _tbound){
-        return true;
-    }
-    if((_direction == _down_left || _direction == _down || _direction == _down_right)
-       && _pos.y() + _speed > _bbound){
-        return true;
+    return hitting_bottom_wall() || 
+           hitting_top_wall() || 
+           hitting_left_wall() || 
+           hitting_right_wall();
+}
+
+bool entity::hitting_left_wall(){
+    return ((_direction == _up_left || _direction == _left || _direction == _down_left)
+       && _pos.x() - _speed < _lbound);
+}
+bool entity::hitting_right_wall(){
+    return ((_direction == _up_right || _direction == _right || _direction == _down_right)
+       && _pos.x() + _speed > _rbound);
+}
+
+bool entity::hitting_top_wall(){
+    return ((_direction == _up_left || _direction == _up || _direction == _up_right)
+       && _pos.y() - _speed < _tbound);
+}
+
+bool entity::hitting_bottom_wall(){
+    return ((_direction == _down_left || _direction == _down || _direction == _down_right)
+       && _pos.y() + _speed > _bbound);
+}
+
+void entity::bounce_off_walls(){
+    BN_ASSERT(hitting_wall(), "entity::bounce_off_walls() can only be called if there is a wall to bounce off of");
+    //mirror the direction so it bounces off the walls
+    int8_t dirmod = 0;
+    if(_direction % 2 == 1){
+        dirmod = -2;
+    }else{
+        dirmod = 4;
     }
 
-    return false;
+    _direction = (_direction + dirmod + 8) % 8;
+
+    //jank ass bug fix but fuck it . 
+    //if we are still hitting a wall, after that rotation, rotate again
+    if(hitting_wall()){
+        _direction = (_direction + 4) % 8;            
+    }
 }
 
 }
