@@ -23,7 +23,7 @@ ghost::ghost(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed temp
 
 void ghost::update(){
 
-    if(hitting_wall()){
+    if(_can_move && hitting_wall()){
         bounce_off_walls();
     }
 

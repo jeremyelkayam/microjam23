@@ -35,12 +35,28 @@ void spider::point_at(bn::fixed_point pos){
     //convert it back to my dumbass way of measuring these stupid things
     int8_t maybe_negative_dir = angle.round_integer();
     _direction = (8 + maybe_negative_dir) % 8;
+    _sprite.set_rotation_angle((270 + 360 - _direction * 45) % 360);
+    // switch (_direction)
+    // {
+    // case 0:
+    //     _sprite.set_rotation_angle(270);
+    //     break;
+    // case 1:
+    //     _sprite.set_rotation_angle(315);
+    //     break;
+    // case 2:
+    //     _sprite.set_rotation_angle(0);
+    //     break;
+    // default:
+    //     _sprite.set_rotation_angle(0);
+    //     break;
+    // }
 }
 
 void spider::lights_on(bn::random &rand){
     if(!_lights_on){
         uint8_t costume = rand.get_int(2);
-
+        _sprite.set_rotation_angle(0);
 
         int8_t sign = 1;
 

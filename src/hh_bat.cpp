@@ -22,7 +22,7 @@ void bat::update(){
     _anim.update();
 
     //bouncing off walls logic. kinda jank
-    if(hitting_wall()){
+    if(_can_move && hitting_wall()){
         bounce_off_walls();
     //     _timer = _turn_time;
     //     int8_t turn_amount = _clockwise ? 2 : -2;

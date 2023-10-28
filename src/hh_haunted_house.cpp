@@ -45,6 +45,7 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _difficulty_level(recommended_difficulty_level(completed_games, data))
 {
     //testing purposes only
+    //TODO: REMOVE THIS FOR SUBMISSION.
     if(completed_games < 3){
         _difficulty_level = mj::difficulty_level::EASY;
     }else if (completed_games < 5){
@@ -167,6 +168,8 @@ void haunted_house::spawn_enemy(const mj::game_data& data, uint8_t enemy_type){
 
 void haunted_house::fade_in([[maybe_unused]] const mj::game_data& data)
 {
+    // if there is going to be a fade in sound, please remove this...
+    bn::sound_items::hh_pipe_organ.play(1);
 }
 
 mj::game_result haunted_house::play(const mj::game_data& data)
@@ -337,26 +340,6 @@ lightbulb::lightbulb(uint8_t descent_frames) :
 }
 
 void lightbulb::update(){
-
-    // if(_timer){
-    //     uint8_t half_swing_time = _swing_time / 2;
-    //     bn::fixed new_angle;
-        
-    //     if(_timer < half_swing_time){
-    //         new_angle = 355 + 10 * 
-    //             bn::fixed(_timer) / bn::fixed(half_swing_time);
-    //     }else{
-    //         new_angle = 5 - 10 * 
-    //             bn::fixed(_timer - half_swing_time) / bn::fixed(half_swing_time);
-    //     }
-    //     if(new_angle > 360) new_angle -= 360;
-    //     if(new_angle < 0) new_angle += 360;
-        
-    //     _bulb.set_rotation_angle(new_angle);
-    //     --_timer;
-    // }else{
-    //     _timer = _swing_time;
-    // }
 
     if(_descent_frames){
         bn::fixed dist = bn::fixed(64) * bn::fixed(_descent_frames) / bn::fixed(_total_descent_frames);

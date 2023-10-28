@@ -5,6 +5,7 @@
 #include "bn_log.h"
 #include "bn_window.h"
 #include "bn_random.h"
+#include "bn_sound_items.h"
 
 
 namespace hh {
