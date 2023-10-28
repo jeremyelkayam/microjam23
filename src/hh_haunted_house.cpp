@@ -101,6 +101,11 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
         }
     }
 
+    _ambient_sounds.emplace_back(bn::sound_items::hh_ominous_0);
+    _ambient_sounds.emplace_back(bn::sound_items::hh_ominous_1);
+    _ambient_sounds.emplace_back(bn::sound_items::hh_ominous_2);
+    _ambient_sounds.emplace_back(bn::sound_items::hh_ominous_3);
+
 
     _peepantsometer.set_scale(2);
     _peepantsometer.set_visible(false);
@@ -170,7 +175,7 @@ void haunted_house::spawn_enemy(const mj::game_data& data, uint8_t enemy_type){
 void haunted_house::fade_in([[maybe_unused]] const mj::game_data& data)
 {
     // if there is going to be a fade in sound, please remove this...
-    bn::sound_items::hh_pipe_organ.play(1);
+    bn::sound_items::hh_pipe_organ.play(0.5);
 }
 
 mj::game_result haunted_house::play(const mj::game_data& data)
@@ -201,6 +206,15 @@ mj::game_result haunted_house::play(const mj::game_data& data)
 
         if(data.pending_frames == _lightbulb_appear_frame){
             _lightbulb.emplace(_lightbulb_appear_frame - _game_end_frame);
+        }
+
+        if(data.pending_frames >= _lightbulb_appear_frame){
+            if(_ambient_sound_timer){
+                --_ambient_sound_timer;
+            }else{
+                _ambient_sounds.at(data.random.get_int(_ambient_sounds.size())).play(1);
+                _ambient_sound_timer = data.random.get_int(60, 120);
+            }
         }
 
         if(data.pending_frames == _game_end_frame){
@@ -337,7 +351,7 @@ lightbulb::lightbulb(uint8_t descent_frames) :
     _radiance.set_visible(false);
     _radiance.set_blending_enabled(true);
     bn::blending::set_transparency_alpha(0.3);
-    // _bulb.set_rotation_angle(350);
+    bn::sound::stop_all();
 }
 
 void lightbulb::update(){

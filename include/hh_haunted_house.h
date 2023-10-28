@@ -8,6 +8,7 @@
 #include "bn_rect_window_actions.h"
 #include "bn_blending.h"
 #include "bn_vector.h"
+#include "bn_sound.h"
 
 #include "hh_player.h"
 #include "hh_bat.h"

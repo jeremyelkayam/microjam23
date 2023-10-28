@@ -14,7 +14,6 @@ entity::entity(bn::fixed x, bn::fixed y, bn::fixed width, bn::fixed height, bn::
 void entity::update(const mj::game_data& data){
     //if your direction is center, you are not moving
 
-
     if(_can_move && _direction != _center){
         bn::fixed dx = _speed, dy = _speed;
         if(_direction % 2 == 1){
