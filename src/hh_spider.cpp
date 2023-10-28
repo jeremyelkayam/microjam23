@@ -25,32 +25,19 @@ void spider::update(){
  }
 
 void spider::point_at(bn::fixed_point pos){
-    //this gives us the angle as a value between -0.5 and 0.5
-    bn::fixed angle = bn::diamond_angle((pos.y() - _pos.y()).floor_integer(),
-                                        (pos.x() - _pos.x()).floor_integer());
+    if(_can_move){
+        //this gives us the angle as a value between -0.5 and 0.5
+        bn::fixed angle = bn::diamond_angle((pos.y() - _pos.y()).floor_integer(),
+                                            (pos.x() - _pos.x()).floor_integer());
 
-    //normalize it
-    //scale it up to be within our 8 directions
-    angle *= 8;
-    //convert it back to my dumbass way of measuring these stupid things
-    int8_t maybe_negative_dir = angle.round_integer();
-    _direction = (8 + maybe_negative_dir) % 8;
-    _sprite.set_rotation_angle((270 + 360 - _direction * 45) % 360);
-    // switch (_direction)
-    // {
-    // case 0:
-    //     _sprite.set_rotation_angle(270);
-    //     break;
-    // case 1:
-    //     _sprite.set_rotation_angle(315);
-    //     break;
-    // case 2:
-    //     _sprite.set_rotation_angle(0);
-    //     break;
-    // default:
-    //     _sprite.set_rotation_angle(0);
-    //     break;
-    // }
+        //normalize it
+        //scale it up to be within our 8 directions
+        angle *= 8;
+        //convert it back to my dumbass way of measuring these stupid things
+        int8_t maybe_negative_dir = angle.round_integer();
+        _direction = (8 + maybe_negative_dir) % 8;
+        _sprite.set_rotation_angle((270 + 360 - _direction * 45) % 360);
+    }
 }
 
 void spider::lights_on(bn::random &rand){

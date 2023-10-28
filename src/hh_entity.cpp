@@ -97,7 +97,7 @@ void entity::bounce_off_walls(){
     if(hitting_wall()){
         _direction = (_direction + 4) % 8;            
     }
-    bn::sound_items::hh_ominous.play(1);
+    // bn::sound_items::hh_ominous.play(1);
 }
 
 }

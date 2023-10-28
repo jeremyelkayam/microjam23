@@ -273,7 +273,7 @@ mj::game_result haunted_house::play(const mj::game_data& data)
         }
     }
 
-    _player.update();
+    _player.update(data.random);
 
 
     return result;

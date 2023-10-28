@@ -13,13 +13,18 @@ player::player(bn::fixed x, bn::fixed y, bn::fixed tempo) :
     _body(bn::sprite_items::hh_person_32.create_sprite(x,y)),
     _footsteps_interval(30),
     _footsteps_timer(0) {
+
+    _footstep_sounds.emplace_back(bn::sound_items::hh_footstep_0);
+    _footstep_sounds.emplace_back(bn::sound_items::hh_footstep_1);
+    _footstep_sounds.emplace_back(bn::sound_items::hh_footstep_2);
+    _footstep_sounds.emplace_back(bn::sound_items::hh_footstep_3);
     
     _body.set_visible(false);
     _body.set_z_order(10);
 }
 
 
-void player::update(){
+void player::update(bn::random &rand){
     entity::update();
 
     if(_can_move && (bn::keypad::up_held() || 
@@ -29,7 +34,8 @@ void player::update(){
         if(_footsteps_timer){
             --_footsteps_timer;
         }else{
-            bn::sound_items::hh_footstep.play(0.5);
+
+            _footstep_sounds.at(rand.get_int(_footstep_sounds.size())).play(0.5);
             _footsteps_timer = _footsteps_interval;
         }
 
