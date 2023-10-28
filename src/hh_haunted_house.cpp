@@ -44,7 +44,13 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _difficulty_level(recommended_difficulty_level(completed_games, data))
 {
     //testing purposes only
-    _difficulty_level = mj::difficulty_level::HARD;
+    if(completed_games < 3){
+        _difficulty_level = mj::difficulty_level::EASY;
+    }else if (completed_games < 5){
+        _difficulty_level = mj::difficulty_level::NORMAL;
+    }else {
+        _difficulty_level = mj::difficulty_level::HARD;
+    }
     
     BN_LOG("tempo: ", _tempo);
     BN_LOG("total frames: ", _total_frames);

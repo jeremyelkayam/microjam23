@@ -72,6 +72,7 @@ void spider::lights_on(bn::random &rand){
 void spider::disable_movement(){
     entity::disable_movement();
     _anim.reset(); 
+    _sprite.set_item(bn::sprite_items::hh_monster, 0);
 }
 
 }
