@@ -17,8 +17,7 @@ ghost::ghost(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed temp
 
 void ghost::update(){
 
-    if(_pos.y() >= _bbound - 5 || _pos.y() <= _tbound + 5 || 
-       _pos.x() >= _rbound - 5 || _pos.x() <= _lbound + 5){
+    if(hitting_wall()){
         //mirror the direction so it bounces off the walls
         _direction = (_direction + 4) % 8;
     }

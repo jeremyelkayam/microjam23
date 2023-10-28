@@ -4,6 +4,8 @@
 #include "bn_regular_bg_ptr.h"
 #include "bn_bg_palette_actions.h"
 #include "bn_optional.h"
+#include "bn_rect_window.h"
+#include "bn_rect_window_actions.h"
 #include <bn_vector.h>
 
 #include "hh_player.h"
@@ -23,7 +25,7 @@ public:
     explosion(bn::regular_bg_ptr &bg, uint8_t fpc);
     void update();
 private:
-    bn::regular_bg_ptr &_bg;
+    bn::regular_bg_ptr &_blackbg;
     bn::bg_palette_fade_to_action _fade;
     void reset_fade();
 };
@@ -58,9 +60,9 @@ public:
     void spawn_enemy();
 
 private:
+    bn::regular_bg_ptr _blackbg, _room;
+    int _total_frames, _game_end_frame, _lights_on_end_frame;
     bn::fixed _tempo;
-    bn::regular_bg_ptr _bg;
-    int _total_frames;
     int _show_result_frames = 120;
     bool _victory = false;
     bool _defeat = false;
@@ -73,6 +75,8 @@ private:
     explosion _explosion;
 
     const uint8_t _normal = 1, _hard = 2, _very_hard = 5; 
+    
+    
 
     void spawn_enemy(const mj::game_data& data, uint8_t enemy_type);
 };

@@ -3,6 +3,7 @@
 
 #include "bn_sprite_ptr.h"
 #include "hh_entity.h"
+#include "bn_random.h"
 
 
 namespace hh
@@ -11,7 +12,7 @@ class player : public entity {
 public: 
     player(bn::fixed x, bn::fixed y, bn::fixed tempo);
     void update();
-    void show_body(const uint8_t &rand);
+    void show_body(bn::random &rand);
     void take_button_input();
     void rotate_eyes();
 

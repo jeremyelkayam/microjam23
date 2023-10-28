@@ -3,6 +3,7 @@
 
 #include "bn_fixed_rect.h"
 #include "bn_log.h"
+#include "bn_window.h"
 
 
 namespace hh {

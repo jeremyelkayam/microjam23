@@ -29,17 +29,26 @@ namespace hh
 {
 
 haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
-    _tempo(recommended_music_tempo(completed_games, data)),
-    _bg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
+    _blackbg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
+    _room(bn::regular_bg_items::hh_gymnasium.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _total_frames(play_jingle(mj::game_jingle_type::METRONOME_16BEAT, completed_games, data)),
+    _game_end_frame(_total_frames * 0.3),
+    _lights_on_end_frame(_total_frames * 0.2),
+    _tempo(recommended_music_tempo(completed_games, data)),
     _player(0,0, _tempo),
     _peepantsometer(bn::sprite_items::hh_peepantsometer.create_sprite(-90,30)),
-    _explosion(_bg, 10)
-    // _spider(40, 40),
-    // _bat(40,-40, 2),
-    // _ghost(-40,-40,5)
+    _explosion(_blackbg, 10)
 {
+    
     BN_LOG("tempo: ", _tempo);
+    BN_LOG("total frames: ", _total_frames);
+    BN_LOG("game end frame: ", _game_end_frame);
+    BN_LOG("lights on end frame: ", _lights_on_end_frame);
+
+    bn::rect_window::internal().set_bottom_right(0,0);
+    bn::rect_window::internal().set_top_left(0,0);
+    bn::rect_window::internal().set_show_all();
+    bn::window::outside().set_show_bg(_room, false);
 
     //for the first enemy, only spawn spider or bat    
     spawn_enemy(data, data.random.get_int(0, 2));
@@ -137,10 +146,9 @@ mj::game_result haunted_house::play(const mj::game_data& data)
             bn::sound_items::hh_waves.play(1);
         }
 
-        if(data.pending_frames == (90 / _tempo).round_integer()){
+        if(data.pending_frames == _game_end_frame){
             //you won
             _victory = true;
-            _player.show_body(data.random.get_int(2));
             _player.disable_movement();
 
             //todo: show guys holding up the baddies 
@@ -153,11 +161,17 @@ mj::game_result haunted_house::play(const mj::game_data& data)
             // bn::sprite_palettes::set_brightness(1);
         }
         //todo: make this a fraction of total frames
-        if(data.pending_frames < (90 / _tempo) && data.pending_frames >= (60 / _tempo)){
-            // bn::fixed brightness = data.pending_frames - (60 / _tempo) * bn::fixed(0.033333);
-            // bn::bg_palettes::set_brightness(brightness);
-            // bn::sprite_palettes::set_brightness(brightness);
-            _bg.set_item(bn::regular_bg_items::hh_gymnasium);
+        if(data.pending_frames < _game_end_frame && data.pending_frames >= _lights_on_end_frame){
+            bn::fixed window_scale_factor = bn::fixed(_game_end_frame - data.pending_frames) / bn::fixed(_game_end_frame - _lights_on_end_frame);
+            bn::rect_window iw = bn::rect_window::internal();
+            iw.set_left(-120 * window_scale_factor);
+            iw.set_right(120 * window_scale_factor);
+            iw.set_top( - 80 * window_scale_factor);
+            iw.set_bottom(80 * window_scale_factor);
+            if(_player.hitbox().intersects(iw.boundaries())){
+                //show your body when you are illuminated by the light ... 
+                _player.show_body(data.random);
+            }
         }
     }
     else
@@ -216,11 +230,11 @@ void haunted_house::fade_out([[maybe_unused]] const mj::game_data& data)
 }
 
 explosion::explosion(bn::regular_bg_ptr &bg, uint8_t fpc) : 
-    _bg(bg),
+    _blackbg(bg),
     _fade(bn::bg_palette_fade_to_action(bg.palette(), fpc, 1)){
         //can probably do this with palette rotation actually
 
-    bn::bg_palette_ptr palette = _bg.palette();
+    bn::bg_palette_ptr palette = _blackbg.palette();
     palette.set_rotate_count(-1);
     
     reset_fade();
@@ -236,7 +250,7 @@ void explosion::update(){
 //this fades between the 16 colors in the bg palette as it simultaneously rotates 
 //between them.. basically giving us an atari explosion effect
 void explosion::reset_fade(){
-    bn::bg_palette_ptr palette = _bg.palette();
+    bn::bg_palette_ptr palette = _blackbg.palette();
     BN_LOG("colors count for palette: ", palette.colors_count());
     uint8_t next_rotation = (palette.rotate_count() + 1) % palette.colors_count();
     uint8_t next_fade = palette.colors_count() - (next_rotation + 1);

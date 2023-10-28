@@ -83,11 +83,12 @@ void player::update(){
     }
 }
 
-void player::show_body(const uint8_t &rand){
+void player::show_body(bn::random &rand){
     _body.set_x(_pos.x());
     _body.set_y(_pos.y() + 6);
     _body.set_visible(true);
-    if(rand == 1){
+    uint8_t costume = rand.get_int(2);
+    if(costume == 1){
         _body.set_item(bn::sprite_items::hh_ken);
     }
 }
