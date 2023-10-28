@@ -16,7 +16,7 @@ ghost::ghost(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed temp
     }else{
         _anim.emplace(bn::create_sprite_animate_action_forever(
             _sprite, 5, bn::sprite_items::hh_monster.tiles_item(),
-            3, 2));
+            2, 3));
     }
 
     //todo: just fucking scale up the 8x8s to 16x16s because they
@@ -70,5 +70,9 @@ void ghost::lights_on(bn::random &rand){
     }
 }
 
+void ghost::disable_movement(){
+    entity::disable_movement();
+    if(_anim) _anim.reset(); 
+}
 
 }

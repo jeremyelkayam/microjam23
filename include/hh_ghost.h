@@ -13,6 +13,7 @@ public:
     ghost(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo, bool pacman_ghost);
     virtual void update();
     virtual void lights_on(bn::random &rand);
+    virtual void disable_movement();
 
 private:
     bn::sprite_ptr _sprite;

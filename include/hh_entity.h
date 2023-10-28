@@ -15,7 +15,7 @@ public:
     virtual void update();
     const bn::fixed_rect &hitbox() {return _hitbox;}
     const bn::fixed_point &pos() {return _pos;}
-    void disable_movement() { _can_move = false;}
+    virtual void disable_movement() { _can_move = false;}
 
     virtual void lights_on(bn::random &rand)=0;
 
