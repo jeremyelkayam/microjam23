@@ -55,19 +55,32 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     bn::rect_window::internal().set_top_left(0,0);
     bn::rect_window::internal().set_show_all();
     bn::window::outside().set_show_bg(_room, false);
-
-    //for the first enemy, only spawn spider or bat    
-    spawn_enemy(data, data.random.get_int(0, 2));
+ 
+    spawn_enemy(data, data.random.get_int(0, 3));
 
     if(_difficulty_level == mj::difficulty_level::NORMAL || _difficulty_level == mj::difficulty_level::HARD){
-        bool ghost = data.random.get_int(0, 2);
-        if(ghost){
-            spawn_enemy(data, 2);
-        }else if(!_spider){
-            spawn_enemy(data, 0);
-        }else if(!_bat){
-            spawn_enemy(data, 1);
+        
+        bool enemy_type = data.random.get_int(2);
+        if(_spider){
+            if(enemy_type) {
+                spawn_enemy(data, 1);
+            }else{
+                spawn_enemy(data, 2);
+            }
+        }else if(_ghost){
+            if(enemy_type) {
+                spawn_enemy(data, 0);
+            }else{
+                spawn_enemy(data, 1);
+            }
+        }else if (_bat){
+            if(enemy_type) {
+                spawn_enemy(data, 0);
+            }else{
+                spawn_enemy(data, 2);
+            }
         }
+        
     }
     if(_difficulty_level == mj::difficulty_level::HARD){
         if(!_ghost){
@@ -100,10 +113,10 @@ void haunted_house::spawn_enemy(const mj::game_data& data, uint8_t enemy_type){
     bn::fixed speedup_factor = 1.0;
     switch(_difficulty_level){
         case mj::difficulty_level::NORMAL:
-            speedup_factor = data.random.get_fixed(1.0, 1.2);
+            speedup_factor = data.random.get_fixed(1.0, 1.1);
             break;
         case mj::difficulty_level::HARD:
-            speedup_factor = data.random.get_fixed(1.1, 1.4);
+            speedup_factor = data.random.get_fixed(1.1, 1.3);
             break;
         default:
             break;
@@ -114,6 +127,12 @@ void haunted_house::spawn_enemy(const mj::game_data& data, uint8_t enemy_type){
         _spider.emplace(xcor, ycor, _tempo * speedup_factor);
     }else if(enemy_type == 1){
         BN_ASSERT(!_bat, "to spawn a bat you can't have one already");
+
+        //custom spawn generator to make sure he starts far away from you
+        xcor = data.random.get_fixed(80, 110) * xquad;
+        ycor = yquad == 1 ? data.random.get_fixed(50, 60) : 
+                                    data.random.get_fixed(-75, -45);
+
         _bat.emplace(xcor, ycor,direction, _tempo * speedup_factor, data.random);
     }else if(enemy_type == 2){
         BN_ASSERT(!_ghost, "to spawn a ghost you can't have one already");

@@ -13,6 +13,7 @@ public:
     virtual void update();
     virtual void lights_on(bn::random &rand);
     void point_at(bn::fixed_point pos);
+    virtual void disable_movement();
 
 private:
     bn::sprite_ptr _sprite;

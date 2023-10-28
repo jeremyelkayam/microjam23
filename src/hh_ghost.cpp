@@ -66,7 +66,7 @@ void ghost::lights_on(bn::random &rand){
 
 void ghost::disable_movement(){
     entity::disable_movement();
-    if(_anim) _anim.reset(); 
+    if(_anim) _anim->reset(); 
 }
 
 }
