@@ -4,7 +4,6 @@
 #include "bn_sprite_items_hh_monster.h"
 #include "bn_sprite_items_hh_true_spider_bart.h"
 #include "bn_sprite_items_hh_true_spider_frank.h"
-#include "bn_sprite_items_hh_true_spider_herob.h"
 #include "bn_math.h"
 
 namespace hh{
@@ -42,7 +41,7 @@ void spider::point_at(bn::fixed_point pos){
 
 void spider::lights_on(bn::random &rand){
     if(!_lights_on){
-        uint8_t costume = rand.get_int(3);
+        uint8_t costume = rand.get_int(2);
         _sprite.set_rotation_angle(0);
 
         // int8_t sign = 1;
@@ -63,7 +62,7 @@ void spider::lights_on(bn::random &rand){
         }else if(costume == 1){
             _sprite = bn::sprite_items::hh_true_spider_bart.create_sprite(new_pos);
         }else{
-            _sprite = bn::sprite_items::hh_true_spider_herob.create_sprite(new_pos);
+            // _sprite = bn::sprite_items::hh_true_spider_herob.create_sprite(new_pos);
         }
         _sprite.set_z_order(9);
 

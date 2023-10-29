@@ -87,7 +87,7 @@ private:
     bn::optional<bat> _bat;
     bn::optional<ghost> _ghost;
     bn::optional<lightbulb> _lightbulb;
-    bn::sprite_ptr _peepantsometer;
+    bn::sprite_ptr _peepantsometer, _fat_guy, _speech_bubble;
     bn::vector<bn::sprite_ptr, 14> _pee_bars;
     bn::vector<bn::sound_item, 6> _ambient_sounds;
     uint8_t _ambient_sound_timer;

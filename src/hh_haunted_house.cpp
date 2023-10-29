@@ -12,6 +12,10 @@
 #include "bn_sprite_items_hh_peebar.h"
 #include "bn_sprite_items_hh_lightbulb.h"
 #include "bn_sprite_items_hh_radiance.h"
+#include "bn_sprite_items_hh_boo.h"
+#include "bn_sprite_items_hh_fat_guy_overalls.h"
+#include "bn_sprite_items_hh_fat_guy_devil.h"
+#include "bn_sprite_items_hh_fat_guy_vampire.h"
 #include "bn_bg_palettes.h"
 #include "bn_sprite_palettes.h"
 #include "bn_sound_items.h"
@@ -42,6 +46,8 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _lightbulb_appear_frame((_total_frames * bn::fixed(0.4)).round_integer()),
     _player(0,0, _tempo),
     _peepantsometer(bn::sprite_items::hh_peepantsometer.create_sprite(-90,30)),
+    _fat_guy(bn::sprite_items::hh_fat_guy_devil.create_sprite(data.random.get_int(-110, 90),data.random.get_int(-60, 70))),
+    _speech_bubble(bn::sprite_items::hh_boo.create_sprite(_fat_guy.x() + 32,_fat_guy.y() - 32)),
     _ambient_sound_timer(90),
     _explosion(_blackbg, 10),
     _difficulty_level(recommended_difficulty_level(completed_games, data))
@@ -49,6 +55,14 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     if(data.random.get_int(2)){
         _room.set_item(bn::regular_bg_items::hh_basement);
     }
+    uint8_t costume = data.random.get_int(3);
+    if(costume == 0){
+        _fat_guy.set_item(bn::sprite_items::hh_fat_guy_overalls);
+    }if(costume == 1){
+        _fat_guy.set_item(bn::sprite_items::hh_fat_guy_vampire);
+    }
+    _fat_guy.set_visible(false);
+    _speech_bubble.set_visible(false);
     //testing purposes only
     //TODO: REMOVE THIS FOR SUBMISSION.
     if(completed_games < 3){
@@ -245,6 +259,13 @@ mj::game_result haunted_house::play(const mj::game_data& data)
                     //show your body when you are illuminated by the light ... 
                     e->lights_on(data.random);
                 }
+            }
+
+            if(iw.boundaries().contains(_speech_bubble.position())){
+                _speech_bubble.set_visible(true);
+            }
+            if(iw.boundaries().contains(_fat_guy.position())){
+                _fat_guy.set_visible(true);
             }
         }
     }

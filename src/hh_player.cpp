@@ -3,6 +3,7 @@
 #include "bn_sprite_items_hh_eyes.h"
 #include "bn_sprite_items_hh_person_32.h"
 #include "bn_sprite_items_hh_ken.h"
+#include "bn_sprite_items_hh_barbara.h"
 
 namespace hh 
 {
@@ -107,9 +108,11 @@ void player::lights_on(bn::random &rand){
         _body.set_x(_pos.x());
         _body.set_y(_pos.y() + 6);
         _body.set_visible(true);
-        uint8_t costume = rand.get_int(2);
+        uint8_t costume = rand.get_int(3);
         if(costume == 1){
             _body.set_item(bn::sprite_items::hh_ken);
+        }else if(costume == 0){
+            _body.set_item(bn::sprite_items::hh_barbara);
         }
         _lights_on = true;
     }
