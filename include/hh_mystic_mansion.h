@@ -2,6 +2,8 @@
 #define HH_HAUNTED_HOUSE_H
 
 #include "bn_regular_bg_ptr.h"
+#include "bn_affine_bg_ptr.h"
+#include "bn_affine_bg_actions.h"
 #include "bn_bg_palette_actions.h"
 #include "bn_optional.h"
 #include "bn_rect_window.h"
@@ -38,19 +40,21 @@ class lightbulb {
 public:
     lightbulb(uint8_t descent_frames);
     void update();
+    void hide_radiance(){ _radiance.set_visible(false);}
 private:
-    bn::sprite_ptr _bulb, _radiance;
+    bn::sprite_ptr _bulb;
+    bn::affine_bg_ptr _radiance;
     uint8_t _descent_frames, _total_descent_frames;
-    bn::sprite_scale_loop_action _radiance_scale;
+    bn::optional<bn::affine_bg_scale_loop_action> _radiance_scale;
 
     // , _swing_time, _timer;
 };
 
-class haunted_house : public mj::game
+class mystic_mansion : public mj::game
 {
 
 public:
-    haunted_house(int completed_games, const mj::game_data& data);
+    mystic_mansion(int completed_games, const mj::game_data& data);
 
     [[nodiscard]] bn::string<16> title() const final
     {

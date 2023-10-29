@@ -22,6 +22,7 @@ player::player(bn::fixed x, bn::fixed y, bn::fixed tempo) :
     
     _body.set_visible(false);
     _body.set_z_order(10);
+    _eyes.set_z_order(9);
 }
 
 

@@ -1,4 +1,4 @@
-#include "hh_haunted_house.h"
+#include "hh_mystic_mansion.h"
 
 #include "bn_keypad.h"
 #include "bn_log.h"
@@ -11,7 +11,7 @@
 #include "bn_sprite_items_hh_peepantsometer.h"
 #include "bn_sprite_items_hh_peebar.h"
 #include "bn_sprite_items_hh_lightbulb.h"
-#include "bn_sprite_items_hh_radiance.h"
+#include "bn_affine_bg_items_hh_radiance.h"
 #include "bn_sprite_items_hh_boo.h"
 #include "bn_sprite_items_hh_fat_guy_overalls.h"
 #include "bn_sprite_items_hh_fat_guy_devil.h"
@@ -27,7 +27,7 @@ namespace
     constexpr bn::string_view sfx_credits[] = { "Michael Elkayam, 3Maze, Soundspark LLC, Studio 23" };
 }
 
-MJ_GAME_LIST_ADD(hh::haunted_house)
+MJ_GAME_LIST_ADD(hh::mystic_mansion)
 MJ_GAME_LIST_ADD_CODE_CREDITS(code_credits)
 MJ_GAME_LIST_ADD_GRAPHICS_CREDITS(graphics_credits)
 // MJ_GAME_LIST_ADD_MUSIC_CREDITS(music_credits)
@@ -36,7 +36,7 @@ MJ_GAME_LIST_ADD_SFX_CREDITS(sfx_credits)
 namespace hh
 {
 
-haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
+mystic_mansion::mystic_mansion(int completed_games, const mj::game_data& data) :
     _blackbg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _room(bn::regular_bg_items::hh_gymnasium.create_bg((256 - 240) / 2, (256 - 160) / 2)),
     _tempo(recommended_music_tempo(completed_games, data)),
@@ -47,7 +47,7 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _player(0,0, _tempo),
     _peepantsometer(bn::sprite_items::hh_peepantsometer.create_sprite(-90,30)),
     _fat_guy(bn::sprite_items::hh_fat_guy_devil.create_sprite(data.random.get_int(-110, 90),data.random.get_int(-60, 70))),
-    _speech_bubble(bn::sprite_items::hh_boo.create_sprite(_fat_guy.x() + 32,_fat_guy.y() - 32)),
+    _speech_bubble(bn::sprite_items::hh_boo.create_sprite(_fat_guy.x() + 24,_fat_guy.y() - 24)),
     _ambient_sound_timer(90),
     _explosion(_blackbg, 10),
     _difficulty_level(recommended_difficulty_level(completed_games, data))
@@ -65,18 +65,13 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _speech_bubble.set_visible(false);
     //testing purposes only
     //TODO: REMOVE THIS FOR SUBMISSION.
-    if(completed_games < 3){
-        _difficulty_level = mj::difficulty_level::EASY;
-    }else if (completed_games < 5){
-        _difficulty_level = mj::difficulty_level::NORMAL;
-    }else {
-        _difficulty_level = mj::difficulty_level::HARD;
-    }
-    
-    BN_LOG("tempo: ", _tempo);
-    BN_LOG("total frames: ", _total_frames);
-    BN_LOG("game end frame: ", _game_end_frame);
-    BN_LOG("lights on end frame: ", _lights_on_end_frame);
+    // if(completed_games < 3){
+    //     _difficulty_level = mj::difficulty_level::EASY;
+    // }else if (completed_games < 5){
+    //     _difficulty_level = mj::difficulty_level::NORMAL;
+    // }else {
+    //     _difficulty_level = mj::difficulty_level::HARD;
+    // }
 
     bn::rect_window::internal().set_bottom_right(0,0);
     bn::rect_window::internal().set_top_left(0,0);
@@ -129,7 +124,7 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _peepantsometer.set_visible(false);
 }
 
-void haunted_house::spawn_enemy(const mj::game_data& data, uint8_t enemy_type){
+void mystic_mansion::spawn_enemy(const mj::game_data& data, uint8_t enemy_type){
 
     int8_t xquad = data.random.get_int(2) == 1 ? 1 : -1;
     int8_t yquad = data.random.get_int(2) == 1 ? 1 : -1;
@@ -190,13 +185,13 @@ void haunted_house::spawn_enemy(const mj::game_data& data, uint8_t enemy_type){
     }    
 }
 
-void haunted_house::fade_in([[maybe_unused]] const mj::game_data& data)
+void mystic_mansion::fade_in([[maybe_unused]] const mj::game_data& data)
 {
     // if there is going to be a fade in sound, please remove this...
     bn::sound_items::hh_pipe_organ.play(0.5);
 }
 
-mj::game_result haunted_house::play(const mj::game_data& data)
+mj::game_result mystic_mansion::play(const mj::game_data& data)
 {
     mj::game_result result;
 
@@ -239,10 +234,24 @@ mj::game_result haunted_house::play(const mj::game_data& data)
             //you won
             _victory = true;
 
-            //todo: show guys holding up the baddies 
             for(entity *e : all_entities()){
                 e->disable_movement();
             }
+            bool intersection;
+            do{
+                intersection = false;
+                for(entity *e : all_entities()){
+                    bn::fixed_rect hitbox = e->hitbox();
+                    hitbox.set_height(hitbox.height() + 20);
+                    hitbox.set_width(hitbox.width() + 20);
+                    intersection = intersection || hitbox.contains(_fat_guy.position())
+                                                || hitbox.contains(_speech_bubble.position());
+                }                
+                if(intersection){
+                    _fat_guy.set_position(data.random.get_int(-110, 90),data.random.get_int(-60, 70));
+                    _speech_bubble.set_position(_fat_guy.x() + 24,_fat_guy.y() - 24);
+                }
+            }while(intersection);
         }
         if(data.pending_frames < _game_end_frame && data.pending_frames >= _lights_on_end_frame){
             bn::fixed window_scale_factor = bn::fixed(_game_end_frame - data.pending_frames) / bn::fixed(_game_end_frame - _lights_on_end_frame);
@@ -319,11 +328,14 @@ mj::game_result haunted_house::play(const mj::game_data& data)
     return result;
 }
 
-void haunted_house::fade_out([[maybe_unused]] const mj::game_data& data)
+void mystic_mansion::fade_out([[maybe_unused]] const mj::game_data& data)
 {
+    if(_lightbulb){
+        _lightbulb->hide_radiance();
+    }
 }
 
-bn::vector<entity*, 4> haunted_house::all_entities(){
+bn::vector<entity*, 4> mystic_mansion::all_entities(){
     bn::vector<entity*, 4> result;
     result.emplace_back(&_player);
     if(_spider) result.emplace_back(_spider.get());
@@ -366,15 +378,19 @@ void explosion::reset_fade(){
 
 lightbulb::lightbulb(uint8_t descent_frames) : 
     _bulb(bn::sprite_items::hh_lightbulb.create_sprite(0, -80 - 32)),
-    _radiance(bn::sprite_items::hh_radiance.create_sprite(0, -80 + 48)),
+    _radiance(bn::affine_bg_items::hh_radiance.create_bg(0, -80 + 48)),
     _descent_frames(descent_frames),
-    _total_descent_frames(descent_frames),
-    _radiance_scale(_radiance, 30, 1.2)
+    _total_descent_frames(descent_frames)
     // _swing_time(120),
     // _timer(_swing_time)
      {
     _radiance.set_visible(false);
     _radiance.set_blending_enabled(true);
+    _radiance.set_priority(0);
+    _radiance.set_wrapping_enabled(false);
+    _radiance.set_scale(0.6);
+
+    _radiance_scale = bn::affine_bg_scale_loop_action(_radiance, 30, 0.8);
     bn::blending::set_transparency_alpha(0.3);
     bn::sound::stop_all();
 }
@@ -397,7 +413,7 @@ void lightbulb::update(){
         _radiance.set_visible(true);
     }
     if(_radiance.visible()){
-        _radiance_scale.update();
+        _radiance_scale->update();
     }
 }
 

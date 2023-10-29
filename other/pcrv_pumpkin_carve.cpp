@@ -33,11 +33,6 @@ pumpkin_carve::pumpkin_carve(int completed_games, const mj::game_data& data) :
     }else {
         _difficulty_level = mj::difficulty_level::HARD;
     }
-    
-    BN_LOG("tempo: ", _tempo);
-    BN_LOG("total frames: ", _total_frames);
-    BN_LOG("game end frame: ", _game_end_frame);
-    BN_LOG("lights on end frame: ", _lights_on_end_frame);
 
     bn::rect_window::internal().set_bottom_right(0,0);
     bn::rect_window::internal().set_top_left(0,0);
