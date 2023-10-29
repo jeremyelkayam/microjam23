@@ -109,6 +109,11 @@ mystic_mansion::mystic_mansion(int completed_games, const mj::game_data& data) :
     _ambient_sounds.emplace_back(bn::sound_items::hh_ominous_1);
     _ambient_sounds.emplace_back(bn::sound_items::hh_ominous_2);
     _ambient_sounds.emplace_back(bn::sound_items::hh_ominous_3);
+    _ambient_sounds.emplace_back(bn::sound_items::hh_ominous_4);
+    _ambient_sounds.emplace_back(bn::sound_items::hh_ominous_5);
+    _ambient_sounds.emplace_back(bn::sound_items::hh_ominous_6);
+    _ambient_sounds.emplace_back(bn::sound_items::hh_ominous_7);
+    _ambient_sounds.emplace_back(bn::sound_items::hh_ominous_8);
 
 
     _peepantsometer.set_scale(2);
