@@ -1,49 +1,28 @@
-#include "hh_haunted_house.h"
+#include "pcrv_pumpkin_carve.h"
 
-#include "bn_keypad.h"
 #include "bn_log.h"
 
 #include "mj/mj_game_list.h"
 
-#include "bn_regular_bg_items_hh_black_bg.h"
-#include "bn_regular_bg_items_hh_gymnasium.h"
-#include "bn_sprite_items_hh_peepantsometer.h"
-#include "bn_sprite_items_hh_peebar.h"
-#include "bn_sprite_items_hh_lightbulb.h"
-#include "bn_sprite_items_hh_radiance.h"
-#include "bn_bg_palettes.h"
-#include "bn_sprite_palettes.h"
-#include "bn_sound_items.h"
 
 namespace
 {
     constexpr bn::string_view code_credits[] = { "Jeremy Elkayam" };
     constexpr bn::string_view graphics_credits[] = { "Jeremy Elkayam, Michael Elkayam" };
-    constexpr bn::string_view sfx_credits[] = { "Michael Elkayam, 3Maze, Soundspark LLC, Studio 23" };
+    constexpr bn::string_view sfx_credits[] = { "Michael Elkayam" };
 }
 
-MJ_GAME_LIST_ADD(hh::haunted_house)
+MJ_GAME_LIST_ADD(prv::pumpkin_carve)
 MJ_GAME_LIST_ADD_CODE_CREDITS(code_credits)
 MJ_GAME_LIST_ADD_GRAPHICS_CREDITS(graphics_credits)
 // MJ_GAME_LIST_ADD_MUSIC_CREDITS(music_credits)
 MJ_GAME_LIST_ADD_SFX_CREDITS(sfx_credits)
 
-namespace hh
+namespace pcrv
 {
 
-haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
-    _blackbg(bn::regular_bg_items::hh_black_bg.create_bg((256 - 240) / 2, (256 - 160) / 2)),
-    _room(bn::regular_bg_items::hh_gymnasium.create_bg((256 - 240) / 2, (256 - 160) / 2)),
-    _tempo(recommended_music_tempo(completed_games, data)),
-    _total_frames((bn::fixed(360) / _tempo).round_integer()),
-    _game_end_frame((_total_frames * bn::fixed(0.3)).round_integer()),
-    _lights_on_end_frame((_total_frames * bn::fixed(0.25)).round_integer()),
-    _lightbulb_appear_frame((_total_frames * bn::fixed(0.4)).round_integer()),
-    _player(0,0, _tempo),
-    _peepantsometer(bn::sprite_items::hh_peepantsometer.create_sprite(-90,30)),
-    _ambient_sound_timer(90),
-    _explosion(_blackbg, 10),
-    _difficulty_level(recommended_difficulty_level(completed_games, data))
+pumpkin_carve::pumpkin_carve(int completed_games, const mj::game_data& data) :
+    _pumpkin(bn::sprite_items::)
 {
     //testing purposes only
     //TODO: REMOVE THIS FOR SUBMISSION.
