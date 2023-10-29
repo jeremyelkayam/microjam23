@@ -45,4 +45,8 @@ void bat::update(const mj::game_data& data){
 
 }
 
+void bat::lights_on(bn::random &rand){
+    _sprite.set_item(bn::sprite_items::)
+}
+
 }
