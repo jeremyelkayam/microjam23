@@ -24,15 +24,6 @@ namespace pcrv
 pumpkin_carve::pumpkin_carve(int completed_games, const mj::game_data& data) :
     _pumpkin(bn::sprite_items::)
 {
-    //testing purposes only
-    //TODO: REMOVE THIS FOR SUBMISSION.
-    if(completed_games < 3){
-        _difficulty_level = mj::difficulty_level::EASY;
-    }else if (completed_games < 5){
-        _difficulty_level = mj::difficulty_level::NORMAL;
-    }else {
-        _difficulty_level = mj::difficulty_level::HARD;
-    }
 
     bn::rect_window::internal().set_bottom_right(0,0);
     bn::rect_window::internal().set_top_left(0,0);

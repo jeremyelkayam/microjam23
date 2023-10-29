@@ -63,15 +63,6 @@ mystic_mansion::mystic_mansion(int completed_games, const mj::game_data& data) :
     }
     _fat_guy.set_visible(false);
     _speech_bubble.set_visible(false);
-    //testing purposes only
-    //TODO: REMOVE THIS FOR SUBMISSION.
-    // if(completed_games < 3){
-    //     _difficulty_level = mj::difficulty_level::EASY;
-    // }else if (completed_games < 5){
-    //     _difficulty_level = mj::difficulty_level::NORMAL;
-    // }else {
-    //     _difficulty_level = mj::difficulty_level::HARD;
-    // }
 
     bn::rect_window::internal().set_bottom_right(0,0);
     bn::rect_window::internal().set_top_left(0,0);
@@ -242,7 +233,7 @@ mj::game_result mystic_mansion::play(const mj::game_data& data)
                 intersection = false;
                 for(entity *e : all_entities()){
                     bn::fixed_rect hitbox = e->hitbox();
-                    hitbox.set_height(hitbox.height() + 20);
+                    hitbox.set_height(hitbox.height() + 30);
                     hitbox.set_width(hitbox.width() + 20);
                     intersection = intersection || hitbox.contains(_fat_guy.position())
                                                 || hitbox.contains(_speech_bubble.position());
