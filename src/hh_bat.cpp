@@ -2,6 +2,7 @@
 #include "hh_bat.h"
 
 #include "bn_sprite_items_hh_monster.h"
+#include "bn_sprite_items_hh_true_bat.h"
 
 namespace hh{
 
@@ -19,7 +20,9 @@ bat::bat(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo, b
 void bat::update(const mj::game_data& data){
     entity::update(data);
     _sprite.set_position(_pos);
-    _anim.update();
+    if(_can_move){
+        _anim.update();
+    }
 
     //bouncing off walls logic. kinda jank
     if(_can_move && hitting_wall()){
@@ -43,6 +46,11 @@ void bat::update(const mj::game_data& data){
     }
 
 
+}
+
+void bat::lights_on(bn::random &rand){
+    _sprite.set_item(bn::sprite_items::hh_true_bat);
+    _sprite.set_horizontal_flip(false);
 }
 
 }
