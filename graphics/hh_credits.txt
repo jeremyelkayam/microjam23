@@ -19,7 +19,6 @@ hh_true_bat_wizard.bmp
 hh_true_ghost.bmp
 hh_true_spider_frank.bmp
 hh_true_spider_bart.bmp
-hh_true_spider_herob.bmp
 	Jeremy Elkayam, Michael Elkayam
 	CC0 1.0 Universal (CC0 1.0)
 	jne@jeremyelkayam.com

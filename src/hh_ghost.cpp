@@ -53,7 +53,7 @@ void ghost::lights_on(bn::random &rand){
         }else{
 
             //75% chance for the if block, 25 for the else block
-            if(rand.get_int(4)){
+            if(rand.get_int(8)){
                 graphics_index = 0;
             }else{
                 graphics_index = 1;
