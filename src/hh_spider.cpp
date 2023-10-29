@@ -2,8 +2,9 @@
 #include "hh_spider.h"
 
 #include "bn_sprite_items_hh_monster.h"
-#include "bn_sprite_items_hh_true_spider.h"
-#include "bn_sprite_items_hh_true_spider_shaggy.h"
+#include "bn_sprite_items_hh_true_spider_bart.h"
+#include "bn_sprite_items_hh_true_spider_frank.h"
+#include "bn_sprite_items_hh_true_spider_herob.h"
 #include "bn_math.h"
 
 namespace hh{
@@ -13,7 +14,6 @@ spider::spider(bn::fixed x, bn::fixed y, bn::fixed tempo) :
     _sprite(bn::sprite_items::hh_monster.create_sprite(x,y)),
     _anim(bn::create_sprite_animate_action_forever(_sprite, 5, 
             bn::sprite_items::hh_monster.tiles_item(), 0, 1)) {
-    
 }
 
 void spider::update(const mj::game_data& data){
@@ -42,30 +42,34 @@ void spider::point_at(bn::fixed_point pos){
 
 void spider::lights_on(bn::random &rand){
     if(!_lights_on){
-        uint8_t costume = rand.get_int(2);
+        uint8_t costume = rand.get_int(3);
         _sprite.set_rotation_angle(0);
 
-        int8_t sign = 1;
+        // int8_t sign = 1;
 
-        if(_direction == 7 || _direction <= 2 ){
-            sign = -1;
-        }
+        // if(_direction == 7 || _direction <= 2 ){
+        //     sign = -1;
+        // }
 
 
-        bn::fixed_point new_pos((_pos.x() + (23 * sign)), (_pos.y() - 2));
+        // bn::fixed_point new_pos((_pos.x() + (23 * sign)), (_pos.y() - 2));
+        bn::fixed_point new_pos(_pos.x(), _pos.y() - 23);
+        
 
         _sprite.set_z_order(10);
 
-        if(costume == 1){
-            _sprite = bn::sprite_items::hh_true_spider.create_sprite(new_pos);
+        if(costume == 0){
+            _sprite = bn::sprite_items::hh_true_spider_frank.create_sprite(new_pos);
+        }else if(costume == 1){
+            _sprite = bn::sprite_items::hh_true_spider_bart.create_sprite(new_pos);
         }else{
-            _sprite = bn::sprite_items::hh_true_spider_shaggy.create_sprite(new_pos);
+            _sprite = bn::sprite_items::hh_true_spider_herob.create_sprite(new_pos);
         }
         _sprite.set_z_order(9);
 
-        if(sign == -1){
-            _sprite.set_horizontal_flip(true);
-        }
+        // if(sign == -1){
+        //     _sprite.set_horizontal_flip(true);
+        // }
     }
 
     _lights_on = true;

@@ -7,6 +7,7 @@
 
 #include "bn_regular_bg_items_hh_black_bg.h"
 #include "bn_regular_bg_items_hh_gymnasium.h"
+#include "bn_regular_bg_items_hh_basement.h"
 #include "bn_sprite_items_hh_peepantsometer.h"
 #include "bn_sprite_items_hh_peebar.h"
 #include "bn_sprite_items_hh_lightbulb.h"
@@ -45,6 +46,9 @@ haunted_house::haunted_house(int completed_games, const mj::game_data& data) :
     _explosion(_blackbg, 10),
     _difficulty_level(recommended_difficulty_level(completed_games, data))
 {
+    if(data.random.get_int(2)){
+        _room.set_item(bn::regular_bg_items::hh_basement);
+    }
     //testing purposes only
     //TODO: REMOVE THIS FOR SUBMISSION.
     if(completed_games < 3){

@@ -3,6 +3,8 @@
 
 #include "bn_sprite_items_hh_monster.h"
 #include "bn_sprite_items_hh_true_bat.h"
+#include "bn_sprite_items_hh_true_bat_shaggy.h"
+#include "bn_sprite_items_hh_true_bat_wizard.h"
 
 namespace hh{
 
@@ -18,9 +20,9 @@ bat::bat(bn::fixed x, bn::fixed y, uint8_t initial_direction, bn::fixed tempo, b
 }
 
 void bat::update(const mj::game_data& data){
-    entity::update(data);
-    _sprite.set_position(_pos);
     if(_can_move){
+        entity::update(data);
+        _sprite.set_position(_pos);
         _anim.update();
     }
 
@@ -49,8 +51,37 @@ void bat::update(const mj::game_data& data){
 }
 
 void bat::lights_on(bn::random &rand){
-    _sprite.set_item(bn::sprite_items::hh_true_bat);
-    _sprite.set_horizontal_flip(false);
+    _sprite.set_vertical_flip(false);
+    if(!_lights_on){
+        uint8_t costume = rand.get_int(3);
+        _sprite.set_rotation_angle(0);
+
+        int8_t sign = 1;
+
+        if(_sprite.x() > 100) sign = -1;
+
+
+        bn::fixed_point new_pos((_pos.x() + (22 * sign)), (_pos.y() - 7));
+        
+
+        _sprite.set_z_order(10);
+        _sprite.set_visible(false);
+
+        if(costume == 0){
+            _sprite = bn::sprite_items::hh_true_bat.create_sprite(new_pos);
+        }else if(costume == 1){
+            _sprite = bn::sprite_items::hh_true_bat_shaggy.create_sprite(new_pos);
+        }else{
+            _sprite = bn::sprite_items::hh_true_bat_wizard.create_sprite(new_pos);
+        }
+        _sprite.set_z_order(9);
+
+        if(sign == -1){
+            _sprite.set_horizontal_flip(true);
+        }
+    }
+
+    _lights_on = true;    
 }
 
 }
